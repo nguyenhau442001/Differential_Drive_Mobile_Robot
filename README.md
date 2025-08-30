@@ -28,4 +28,5 @@ source devel/setup.bash
 catkin_create_pkg mobile_robot
 cd ~/catkin_ws
 catkin_make --pkg mobile_robot
+source devel/setup.bash
 ```
