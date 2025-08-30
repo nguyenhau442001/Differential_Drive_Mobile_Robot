@@ -22,3 +22,10 @@ git clone git@github.com:nguyenhau442001/Differential_Drive_Mobile_Robot.git && 
 catkin_make
 source devel/setup.bash
 ```
+
+## 3. Create the new package
+```bash
+catkin_create_pkg mobile_robot
+cd ~/catkin_ws
+catkin_make --pkg mobile_robot
+```
