@@ -8,16 +8,16 @@
       <updateRate>100</updateRate>
       <leftJoint>left_wheel_joint</leftJoint>
       <rightJoint>right_wheel_joint</rightJoint>
-      <wheelSeparation>${wheel_separation}</wheelSeparation>
-      <wheelDiameter>${wheel_diameter}</wheelDiameter>
-      <torque>2.0</torque>
+      <wheelSeparation>0.4</wheelSeparation>
+      <wheelDiameter>0.2</wheelDiameter>
+      <torque>10</torque>
       <commandTopic>cmd_vel</commandTopic>
-      <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
-      <robotBaseFrame>chassis</robotBaseFrame>
       <publishWheelTF>true</publishWheelTF>
       <publishOdomTF>true</publishOdomTF>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
       <odometrySource>encoder</odometrySource>
+      <robotBaseFrame>chassis</robotBaseFrame>
     </plugin>
   </gazebo>
 
@@ -26,8 +26,8 @@
     <material>Gazebo/Black</material>
     <mu>0.8</mu>
     <mu2>0.8</mu2>
-    <kp>1000000000.0</kp>
-    <kd>10.0</kd>
+    <kp>1000000000.0</kp> <!--contact stiffness-->
+    <kd>10.0</kd> <!--damping-->
     <cfm>0.00001</cfm>
     <erp>0.2</erp>
   </gazebo>
@@ -36,21 +36,22 @@
     <material>Gazebo/Black</material>
     <mu>0.8</mu>
     <mu2>0.8</mu2>
-    <kp>1000000000.0</kp>
-    <kd>10.0</kd>
+    <kp>1000000000.0</kp> <!--contact stiffness-->
+    <kd>10.0</kd> <!--damping-->
     <cfm>0.00001</cfm>
     <erp>0.2</erp>
   </gazebo>
 
   <!-- Chassis color -->
   <gazebo reference="chassis">
-    <material>Gazebo/Orange</material>
+    <material>white</material>
+    <pose> 0 0 0 0 0 0</pose>
   </gazebo>
 
-  <!-- LIDAR sensor -->
+  <!-- LIDAR sensor --> 
   <gazebo reference="lidar_link">
     <sensor type="ray" name="head_hokuyo_sensor">
-      <pose>0 0 0.052 0 0 0</pose>
+      <pose>0 0 0 0 0 0</pose>
       <visualize>true</visualize>
       <update_rate>200</update_rate>
       <ray>
@@ -83,5 +84,4 @@
       </plugin>
     </sensor>
   </gazebo>
-
 </robot>
