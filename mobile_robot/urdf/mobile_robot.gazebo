@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<robot name="mobile_robot">
+  <!-- Differential Drive Plugin -->
+  <gazebo>
+    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <legacyMode>false</legacyMode>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>100</updateRate>
+      <leftJoint>left_wheel_joint</leftJoint>
+      <rightJoint>right_wheel_joint</rightJoint>
+      <wheelSeparation>${wheel_separation}</wheelSeparation>
+      <wheelDiameter>${wheel_diameter}</wheelDiameter>
+      <torque>2.0</torque>
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <robotBaseFrame>chassis</robotBaseFrame>
+      <publishWheelTF>true</publishWheelTF>
+      <publishOdomTF>true</publishOdomTF>
+      <odometrySource>encoder</odometrySource>
+    </plugin>
+  </gazebo>
+
+  <!-- Wheel friction -->
+  <gazebo reference="left_wheel_link">
+    <material>Gazebo/Black</material>
+    <mu>0.8</mu>
+    <mu2>0.8</mu2>
+    <kp>1000000000.0</kp>
+    <kd>10.0</kd>
+    <cfm>0.00001</cfm>
+    <erp>0.2</erp>
+  </gazebo>
+
+  <gazebo reference="right_wheel_link">
+    <material>Gazebo/Black</material>
+    <mu>0.8</mu>
+    <mu2>0.8</mu2>
+    <kp>1000000000.0</kp>
+    <kd>10.0</kd>
+    <cfm>0.00001</cfm>
+    <erp>0.2</erp>
+  </gazebo>
+
+  <!-- Chassis color -->
+  <gazebo reference="chassis">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+  <!-- LIDAR sensor -->
+  <gazebo reference="lidar_link">
+    <sensor type="ray" name="head_hokuyo_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>200</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1 </resolution>
+            <min_angle>-1.570796</min_angle>
+            <max_angle>1.570796</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.05</min>
+          <max>30</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise parameters based on published spec for Hokuyo laser
+               achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+               stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+               reading. -->
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>/mobile_robot/laser/scan</topicName>
+        <frameName>lidar_link</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+</robot>

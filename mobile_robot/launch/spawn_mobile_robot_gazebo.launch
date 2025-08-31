@@ -1,0 +1,11 @@
+<launch>
+  <!-- Load robot_description parameter -->
+  <param name="robot_description" command="$(find xacro)/xacro $(find mobile_robot)/urdf/mobile_robot.xacro" />
+
+  <!-- Launch Gazebo -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch" />
+
+  <!-- Spawn the robot in Gazebo -->
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model"
+        args="-param robot_description -urdf -model mobile_robot" />
+</launch>
