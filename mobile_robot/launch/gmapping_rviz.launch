@@ -1,0 +1,37 @@
+<launch>
+    <arg name="scan_topic"  default="/mobile_robot/laser/scan" />
+    <arg name="base_frame"  default="chassis"/>
+    <arg name="odom_frame"  default="odom"/>
+    
+    <param name="robot_description" command="$(find xacro)/xacro '$(find mobile_robot)/urdf/mobile_robot.xacro'"/>
+  
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+      <param name="use_gui" value="False"/>
+    </node>  
+  
+    <!--Publish robot state and transforms-->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"></node>
+    
+    <!--Launch rviz-->
+    <node pkg="rviz" type="rviz" name="rviz"
+    args="-d $(find mobile_robot)/rviz/gmapping.rviz"></node>
+  
+    <!--Launch slam_gmapping node-->
+    <node pkg="gmapping" name="slam_gmapping" type="slam_gmapping" output="screen">
+      <remap from="scan" to="mobile_robot/laser/scan"/>
+      <param name="base_frame" value="chassis" />
+      <param name="delta" value="0.05"/>
+      <param name="xmin" value="-10.0"/>
+      <param name="xmax" value="10"/>
+      <param name="ymin" value="-10.0"/>
+      <param name="ymax" value="10"/>
+      <param name="linearUpdate" value="0.1"/>
+      <param name="angularUpdate" value="0.2"/>
+      <param name="temporalUpdate" value="0.5"/>
+      <param name="resampleThreshold" value="0.5"/>
+      <param name="particles" value="100"/>
+      <param name="map_update_interval" value="2.0"/>
+      <param name="maxUrange" value="10"/>
+    </node>
+  
+  </launch>	
