@@ -30,3 +30,15 @@ cd ~/catkin_ws
 catkin_make --pkg mobile_robot
 source devel/setup.bash
 ```
+
+## 4. Execute the launch file
+```bash
+cd ~/catkin_ws
+source /opt/ros/noetic/setup.bash
+source devel/setup.bash
+
+# Try below:
+roslaunch mobile_robot spawn_mobile_robot_gazebo.launch
+roslaunch mobile_robot gmapping_rviz.launch
+rosrun mobile_robot keyboard_teleop.py
+```
