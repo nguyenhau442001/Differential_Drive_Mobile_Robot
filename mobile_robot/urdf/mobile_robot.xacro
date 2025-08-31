@@ -10,7 +10,7 @@
   <!-- Wheel dimensions -->
   <xacro:property name="wheel_radius" value="0.1"/>
   <xacro:property name="wheel_thickness" value="0.05"/>
-  <xacro:property name="wheel_mass" value="5.0"/>
+  <xacro:property name="wheel_mass" value="0.5"/>
 
   <!-- Wheel placement -->
   <xacro:property name="wheel_y_offset" value="${(chassis_width / 2) + (wheel_thickness / 2)}"/>
@@ -143,10 +143,10 @@
     <inertial>
       <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
       <mass value="${wheel_mass}"/>
-      <inertia ixx="0.1" ixy="0" ixz="0"
-               iyy="0.1" iyz="0"
-               izz="0.1"/>
-    </inertial>
+      <inertia ixx="0.00135" ixy="0" ixz="0"
+               iyy="0.00135" iyz="0"
+               izz="0.0025"/>
+      </inertial>
   </link>
 
   <joint type="continuous" name="left_wheel_joint">
@@ -178,9 +178,9 @@
     <inertial>
       <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
       <mass value="${wheel_mass}"/>
-      <inertia ixx="0.1" ixy="0" ixz="0"
-               iyy="0.1" iyz="0"
-               izz="0.1"/>
+      <inertia ixx="0.00135" ixy="0" ixz="0"
+               iyy="0.00135" iyz="0"
+               izz="0.0025"/>
     </inertial>
   </link>
 
