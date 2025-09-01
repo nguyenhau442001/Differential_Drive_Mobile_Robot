@@ -27,10 +27,10 @@
       <param name="ymax" value="10"/>
       <param name="linearUpdate" value="0.1"/>
       <param name="angularUpdate" value="0.2"/>
-      <param name="temporalUpdate" value="0.5"/>
+      <param name="temporalUpdate" value="0.1"/>
       <param name="resampleThreshold" value="0.5"/>
       <param name="particles" value="100"/>
-      <param name="map_update_interval" value="2.0"/>
+      <param name="map_update_interval" value="0.5"/>
       <param name="maxUrange" value="10"/>
     </node>
   
