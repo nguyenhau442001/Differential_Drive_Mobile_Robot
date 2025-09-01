@@ -38,7 +38,12 @@ source /opt/ros/noetic/setup.bash
 source devel/setup.bash
 
 # Try below:
+# Try to scan the map by using keyboard:
 roslaunch mobile_robot spawn_mobile_robot_gazebo.launch
 roslaunch mobile_robot gmapping_rviz.launch
 rosrun mobile_robot keyboard_teleop.py
+
+# After completing the map, run the commands below to execute navigation.
+roslaunch mobile_robot spawn_mobile_robot_gazebo.launch
+roslaunch mobile_robot amcl_move_base.launch
 ```
