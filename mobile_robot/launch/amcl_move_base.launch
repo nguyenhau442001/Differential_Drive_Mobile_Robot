@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <master auto="start"/>
+  <include file="$(find mobile_robot)/launch/spawn_mobile_robot_gazebo.launch"/>
   <param name="robot_description" command="$(find xacro)/xacro '$(find mobile_robot)/urdf/mobile_robot.xacro'"/>
 
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
