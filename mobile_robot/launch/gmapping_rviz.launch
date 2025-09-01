@@ -25,8 +25,8 @@
       <param name="xmax" value="10"/>
       <param name="ymin" value="-10.0"/>
       <param name="ymax" value="10"/>
-      <param name="linearUpdate" value="0.1"/>
-      <param name="angularUpdate" value="0.2"/>
+      <param name="linearUpdate" value="0.03"/>
+      <param name="angularUpdate" value="0.05"/>
       <param name="temporalUpdate" value="0.1"/>
       <param name="resampleThreshold" value="0.5"/>
       <param name="particles" value="100"/>
