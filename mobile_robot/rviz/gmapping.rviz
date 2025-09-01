@@ -72,7 +72,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        lidar:
+        lidar_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -97,7 +97,7 @@ Visualization Manager:
           Value: true
         left_wheel_link:
           Value: true
-        lidar:
+        lidar_link:
           Value: true
         map:
           Value: true
@@ -117,7 +117,7 @@ Visualization Manager:
             base_link:
               left_wheel_link:
                 {}
-              lidar:
+              lidar_link:
                 {}
               right_wheel_link:
                 {}
