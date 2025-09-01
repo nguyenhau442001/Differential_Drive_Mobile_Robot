@@ -33,6 +33,7 @@ source devel/setup.bash
 
 ## 4. Execute the launch file
 ```bash
+export DISABLE_ROS1_EOL_WARNINGS=1
 cd ~/catkin_ws
 source /opt/ros/noetic/setup.bash
 source devel/setup.bash
@@ -44,6 +45,5 @@ roslaunch mobile_robot gmapping_rviz.launch
 rosrun mobile_robot keyboard_teleop.py
 
 # After completing the map, run the commands below to execute navigation.
-roslaunch mobile_robot spawn_mobile_robot_gazebo.launch
 roslaunch mobile_robot amcl_move_base.launch
 ```
