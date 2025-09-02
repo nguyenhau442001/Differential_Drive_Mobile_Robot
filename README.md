@@ -1,18 +1,5 @@
 # Project Description:
-
 Choose Gazebo and ROS1 Noetic, and build a simulation for a mobile robot.
-
-Requirements:
-The simulation should include the following components:
-- The robot model can be simple, composed of basic shapes like boxes and cylinders.
-- Ensure the kinematics are accurate.
-- The robot should be manually controllable via keyboard input.
-- The robot should be able to achieve 5m/s velocity within 5s from stand still, and should completely stop within 1s.
-- Include a configuration file (or preferably an interactive tool) to modify the robot’s physical parameters (wheelbase, track width, wheel radius, etc.)
-- Implement a simple go-to-goal action, where the user can specify a coordinate for the robot to move.
-  
-  ○ Hint: It does not have to be a fancy algorithm, as long as the robot can reach the proximity of the destination, it will be considered completed.
-
 
 ## 1. Environment Setup
 Install ROS1 Noetic: https://wiki.ros.org/noetic/Installation/Ubuntu
@@ -82,9 +69,7 @@ source devel/setup.bash
 ```bash
 # First terminal: launch the mobile robot in Gazebo (in default, the 10x10 world is being used)
 # Choose one in 3 below command
-roslaunch mobile_robot_gazebo mobile_robot_empty_world.launch
 roslaunch mobile_robot_gazebo mobile_robot_10x10_world.launch
-roslaunch mobile_robot_gazebo mobile_robot_20x20_world.launch
 ```
 <img width="1842" height="787" alt="image" src="https://github.com/user-attachments/assets/73d45c8f-ca78-4eba-aee3-7f56daa7a36d" />
 
@@ -143,6 +128,7 @@ To move to a goal, click on 2D Nav Goal to set your goal location and pose.
 ## Verify the velocity
 ```bash
 rosrun rqt_plot rqt_plot
+roslaunch mobile_robot_gazebo mobile_robot_empty_world.launch
 ```
 
 Add two below topics in the plots, just to check the velocity response by increasing the velocity slowly.
@@ -165,7 +151,7 @@ rostopic pub /cmd_vel geometry_msgs/Twist "linear:
 angular:
   x: 0.0
   y: 0.0
-  z: 0.0" -r 10
+  z: 0.0" -r 100
 ```
 
 To stop:
@@ -177,5 +163,8 @@ rostopic pub /cmd_vel geometry_msgs/Twist "linear:
 angular:
   x: 0.0
   y: 0.0
-  z: 0.0" -r 10
+  z: 0.0" -r 100
 ```
+
+To monitor the acceleration:
+Add topic: /imu/linear_acceleration/x
