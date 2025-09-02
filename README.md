@@ -1,4 +1,18 @@
-Description: This repository will build and run a mobile robot simulation using Gazebo on ROS1 Noetic
+# Project Description:
+
+Choose Gazebo and ROS1 Noetic, and build a simulation for a mobile robot.
+
+Requirements:
+The simulation should include the following components:
+- The robot model can be simple, composed of basic shapes like boxes and cylinders.
+- Ensure the kinematics are accurate.
+- The robot should be manually controllable via keyboard input.
+- The robot should be able to achieve 5m/s velocity within 5s from stand still, and should completely stop within 1s.
+- Include a configuration file (or preferably an interactive tool) to modify the robot’s physical parameters (wheelbase, track width, wheel radius, etc.)
+- Implement a simple go-to-goal action, where the user can specify a coordinate for the robot to move.
+  
+  ○ Hint: It does not have to be a fancy algorithm, as long as the robot can reach the proximity of the destination, it will be considered completed.
+
 
 ## 1. Environment Setup
 Install ROS1 Noetic: https://wiki.ros.org/noetic/Installation/Ubuntu
