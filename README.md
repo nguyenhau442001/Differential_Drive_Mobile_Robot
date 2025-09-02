@@ -131,7 +131,7 @@ source devel/setup.bash
 # After completing the map, run the commands below to execute navigation.
 roslaunch mobile_robot_navigation mobile_robot_navigation.launch
 ```
-<img width="1839" height="876" alt="image" src="https://github.com/user-attachments/assets/21b207db-d197-46dd-814f-11dad260dea4" />
+<img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/21b207db-d197-46dd-814f-11dad260dea4" />
 
 In rviz, click on 2D Pose Estimate and set initial pose estimate of the robot.
 To move to a goal, click on 2D Nav Goal to set your goal location and pose.
@@ -140,6 +140,42 @@ To move to a goal, click on 2D Nav Goal to set your goal location and pose.
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/aee2a359-069e-47e6-b6ca-138fd3075ada" />
 
 
-## Draw the graphic
+## Verify the velocity
+```bash
 rosrun rqt_plot rqt_plot
+```
 
+Add two below topics in the plots, just to check the velocity response by increasing the velocity slowly.
+
+/cmd_vel/linear/x          => Set Point (SP)
+
+/odom/twist/twist/linear/x => Process Variable (PV)
+
+<img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/3ed75f91-36b0-4e06-a09b-962bb9176319" />
+
+
+The case: The robot should be able to achieve 5m/s velocity within 5s from stand still, and should completely stop within 1s.
+
+To set 5m/s:
+```bash
+rostopic pub /cmd_vel geometry_msgs/Twist "linear:
+  x: 5.0
+  y: 0.0
+  z: 0.0
+angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0" -r 10
+```
+
+To stop:
+```bash
+rostopic pub /cmd_vel geometry_msgs/Twist "linear:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0" -r 10
+```
