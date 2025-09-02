@@ -7,11 +7,12 @@ if os.name == 'nt':
 else:
   import tty, termios
 
-MAX_LIN_VEL = 200.0
-MAX_ANG_VEL = 50.0
+MAX_LIN_VEL = 1.0
+MAX_ANG_VEL = 2.5
 
-LIN_VEL_STEP_SIZE = 0.2
-ANG_VEL_STEP_SIZE = 0.2
+LIN_VEL_STEP_SIZE = 0.05
+ANG_VEL_STEP_SIZE = 0.1
+
 
 msg = """
 Control Your Differential-Drive Mobile Robot!!!
