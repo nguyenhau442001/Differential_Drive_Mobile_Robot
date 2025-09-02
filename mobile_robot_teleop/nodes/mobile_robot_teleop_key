@@ -7,8 +7,8 @@ if os.name == 'nt':
 else:
   import tty, termios
 
-MAX_LIN_VEL = 1.0
-MAX_ANG_VEL = 2.5
+MAX_LIN_VEL = 10.0
+MAX_ANG_VEL = 25
 
 LIN_VEL_STEP_SIZE = 0.05
 ANG_VEL_STEP_SIZE = 0.1
