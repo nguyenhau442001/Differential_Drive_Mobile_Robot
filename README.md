@@ -27,7 +27,7 @@ sudo apt-get install ros-noetic-joy ros-noetic-teleop-twist-joy \
   ros-noetic-move-base ros-noetic-urdf ros-noetic-xacro \
   ros-noetic-compressed-image-transport ros-noetic-rqt* ros-noetic-rviz \
   ros-noetic-gmapping ros-noetic-navigation ros-noetic-interactive-markers ]
-  ros-noetic-tf2-tools
+  ros-noetic-tf2-tools ros-noetic-robot-localization
 ```
 
 ## 2. Create the work space
@@ -51,7 +51,9 @@ source devel/setup.bash
   - Chassis (base)
   - 4 Caster links (non-driven support wheels)
   - Left & Right drive wheels
+  - IMU sensor
   - Lidar sensor
+
 <img width="1824" height="759" alt="image" src="https://github.com/user-attachments/assets/f2a69b68-876a-4dc6-a20b-09cbea5dca7f" />
 <img width="1824" height="759" alt="image" src="https://github.com/user-attachments/assets/bc2bd408-ba4a-40ff-aa22-a653fca2b56f" />
 <img width="1824" height="759" alt="image" src="https://github.com/user-attachments/assets/b5821ce8-12c4-463e-9612-f24e65e3f2ed" />
@@ -65,9 +67,10 @@ or
 rosrun tf2_tools view_frames.py
 evince frames.pdf
 ```
-<img width="1668" height="518" alt="image" src="https://github.com/user-attachments/assets/4cd4ff02-b105-43eb-bfea-ef65a60f88bb" />
+<img width="1660" height="355" alt="image" src="https://github.com/user-attachments/assets/f0e7d94b-a6f3-4449-afa0-6563179bcbc4" />
 
-## Gmapping
+
+## 5. Gmapping
 Every new shell has to run the commands below to detect the ROS packages.
 ```bash
 echo 'export DISABLE_ROS1_EOL_WARNINGS=1' >> ~/.bashrc
@@ -90,7 +93,6 @@ roslaunch mobile_robot_gazebo mobile_robot_20x20_world.launch
 # Second terminal: launch RViz and get ready to scan the map
 roslaunch mobile_robot_slam mobile_robot_slam.launch
 ```
-<img width="1842" height="787" alt="image" src="https://github.com/user-attachments/assets/16e2d4af-8863-4b9d-b93c-933b138d0e8b" />
 
 <img width="1842" height="787" alt="image" src="https://github.com/user-attachments/assets/9b732f06-5fa5-4dbb-bd24-c7150c04f626" />
 
@@ -120,7 +122,7 @@ Fourth terminal: save the map
 rosrun map_server map_saver -f mobile_robot/maps/
 ```
 
-## Navigation
+## 6. Navigation
 ```bash
 cd ~/catkin_ws
 source /opt/ros/noetic/setup.bash
