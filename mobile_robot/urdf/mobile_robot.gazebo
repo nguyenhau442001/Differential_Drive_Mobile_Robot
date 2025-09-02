@@ -27,8 +27,8 @@
 
   <!-- Wheel friction -->
   <gazebo reference="left_wheel_link">
-    <mu1>0.1</mu1>
-    <mu2>0.1</mu2>
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
     <kp>500000.0</kp>
     <kd>10.0</kd>
     <minDepth>0.001</minDepth>
@@ -38,8 +38,8 @@
   </gazebo>
 
   <gazebo reference="right_wheel_link">
-    <mu1>0.1</mu1>
-    <mu2>0.1</mu2>
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
     <kp>500000.0</kp>
     <kd>10.0</kd>
     <minDepth>0.001</minDepth>
@@ -48,41 +48,34 @@
     <material>Gazebo/FlatBlack</material>
   </gazebo>
 
+  <!-- Caster friction -->
   <gazebo reference="caster_front_left_link">
-    <mu1>0.1</mu1>
-    <mu2>0.1</mu2>
-    <kp>1000000.0</kp>
-    <kd>100.0</kd>
+    <kp>100000.0</kp>
+    <kd>10.0</kd>
     <minDepth>0.001</minDepth>
     <maxVel>1.0</maxVel>
     <material>Gazebo/FlatBlack</material>
   </gazebo>
 
   <gazebo reference="caster_front_right_link">
-    <mu1>0.1</mu1>
-    <mu2>0.1</mu2>
-    <kp>1000000.0</kp>
-    <kd>100.0</kd>
+    <kp>100000.0</kp>
+    <kd>10.0</kd>
     <minDepth>0.001</minDepth>
     <maxVel>1.0</maxVel>
     <material>Gazebo/FlatBlack</material>
   </gazebo>
 
   <gazebo reference="caster_rear_left_link">
-    <mu1>0.1</mu1>
-    <mu2>0.1</mu2>
-    <kp>1000000.0</kp>
-    <kd>100.0</kd>
+    <kp>100000.0</kp>
+    <kd>10.0</kd>
     <minDepth>0.001</minDepth>
     <maxVel>1.0</maxVel>
     <material>Gazebo/FlatBlack</material>
   </gazebo>
 
   <gazebo reference="caster_rear_right_link">
-    <mu1>0.1</mu1>
-    <mu2>0.1</mu2>
-    <kp>1000000.0</kp>
-    <kd>100.0</kd>
+    <kp>100000.0</kp>
+    <kd>10.0</kd>
     <minDepth>0.001</minDepth>
     <maxVel>1.0</maxVel>
     <material>Gazebo/FlatBlack</material>
@@ -91,7 +84,7 @@
   <!-- Chassis color -->
   <gazebo reference="chassis">
     <material>white</material>
-    <pose> 0 0 0 0 0 0</pose>
+    <pose>0 0 0 0 0 0</pose>
   </gazebo>
 
   <!-- LIDAR sensor --> 
