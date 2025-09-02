@@ -78,14 +78,17 @@ source devel/setup.bash
 
 ```bash
 # First terminal: launch the mobile robot in Gazebo (in default, the 10x10 world is being used)
-roslaunch mobile_robot spawn_mobile_robot_gazebo.launch
+# Choose one in 3 below command
+roslaunch mobile_robot_gazebo mobile_robot_empty_world.launch
+roslaunch mobile_robot_gazebo mobile_robot_10x10_world.launch
+roslaunch mobile_robot_gazebo mobile_robot_20x20_world.launch
 ```
 <img width="1842" height="787" alt="image" src="https://github.com/user-attachments/assets/73d45c8f-ca78-4eba-aee3-7f56daa7a36d" />
 
 
 ```bash
 # Second terminal: launch RViz and get ready to scan the map
-roslaunch mobile_robot gmapping_rviz.launch
+roslaunch mobile_robot_slam mobile_robot_slam.launch
 ```
 <img width="1842" height="787" alt="image" src="https://github.com/user-attachments/assets/16e2d4af-8863-4b9d-b93c-933b138d0e8b" />
 
@@ -93,9 +96,9 @@ roslaunch mobile_robot gmapping_rviz.launch
 
 ```bash
 # Third terminal: scan the map by driving the robot with the keyboard
-rosrun mobile_robot keyboard_teleop.py
+roslaunch mobile_robot_teleop mobile_robot_teleop_key.launch
 
-hau@hau-VirtualBox:~/catkin_ws$ rosrun mobile_robot keyboard_teleop.py
+hau@hau-VirtualBox:~/catkin_ws$ roslaunch mobile_robot_teleop mobile_robot_teleop_key.launch
 
 Control Your Differential-Drive Mobile Robot!!!
 ---------------------------
@@ -124,7 +127,7 @@ source /opt/ros/noetic/setup.bash
 source devel/setup.bash
 
 # After completing the map, run the commands below to execute navigation.
-roslaunch mobile_robot amcl_move_base.launch
+roslaunch mobile_robot_navigation mobile_robot_navigation.launch
 ```
 <img width="1839" height="876" alt="image" src="https://github.com/user-attachments/assets/21b207db-d197-46dd-814f-11dad260dea4" />
 
