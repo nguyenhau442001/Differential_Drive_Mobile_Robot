@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>mobile_robot_teleop</name>
+  <version>1.0.0</version>
+  <description>
+    Provides teleoperation using keyboard for Mobile Robot.
+  </description>
+  <license>BSD</license>
+  <author email="nguyenhau442001@gmail.com">Nguyen Ngoc Hau</author>
+  <maintainer email="nguyenhau442001@gmail.com">Nguyen Ngoc Hau</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+  <depend>geometry_msgs</depend>
+</package>

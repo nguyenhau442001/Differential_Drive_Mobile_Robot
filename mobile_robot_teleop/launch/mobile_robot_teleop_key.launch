@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="mobile_robot_teleop" type="mobile_robot_teleop_key" name="mobile_robot_teleop_keyboard"  output="screen">
+  </node>
+</launch>

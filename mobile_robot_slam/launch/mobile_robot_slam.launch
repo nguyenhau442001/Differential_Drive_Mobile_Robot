@@ -3,7 +3,7 @@
     <arg name="base_frame"  default="chassis"/>
     <arg name="odom_frame"  default="odom"/>
     
-    <param name="robot_description" command="$(find xacro)/xacro '$(find mobile_robot)/urdf/mobile_robot.xacro'"/>
+    <param name="robot_description" command="$(find xacro)/xacro '$(find mobile_robot_description)/urdf/mobile_robot.urdf.xacro'"/>
   
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
       <param name="use_gui" value="False"/>
@@ -14,7 +14,7 @@
     
     <!--Launch rviz-->
     <node pkg="rviz" type="rviz" name="rviz"
-    args="-d $(find mobile_robot)/rviz/gmapping.rviz"></node>
+    args="-d $(find mobile_robot_slam)/rviz/gmapping.rviz"></node>
   
     <!--Launch slam_gmapping node-->
     <node pkg="gmapping" name="slam_gmapping" type="slam_gmapping" output="screen">

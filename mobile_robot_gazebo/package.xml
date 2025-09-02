@@ -1,19 +1,21 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>mobile_robot</name>
-  <version>1.2.6</version>
+  <name>mobile_robot_gazebo</name>
+  <version>1.0.0</version>
   <description>
-    ROS packages for the mobile_robot (meta package)
+    Gazebo simulation package for the mobile_robot
   </description>
   <license>Apache 2.0</license>
-  <license>BSD</license>
   <author email="nguyenhau442001@gmail.com">Nguyen Ngoc Hau</author>
   <maintainer email="nguyenhau442001@gmail.com">Nguyen Ngoc Hau</maintainer>
   <buildtool_depend>catkin</buildtool_depend>
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf</depend>
+  <depend>gazebo_ros</depend>
+  <exec_depend>gazebo</exec_depend>
   <exec_depend>mobile_robot_description</exec_depend>
-  <exec_depend>mobile_robot_navigation</exec_depend>
-  <exec_depend>mobile_robot_slam</exec_depend>
-  <exec_depend>mobile_robot_teleop</exec_depend>
-  <exec_depend>mobile_robot_gazebo</exec_depend>
-  <export><metapackage/></export>
 </package>
