@@ -4,7 +4,6 @@ Choose Gazebo and ROS1 Noetic, and build a simulation for a mobile robot.
 ## 1. Environment Setup
 Install ROS1 Noetic: https://wiki.ros.org/noetic/Installation/Ubuntu
 ```bash
-source /opt/ros/noetic/setup.bash
 sudo apt install python3-roslaunch
 sudo apt-get install ros-noetic-joy ros-noetic-teleop-twist-joy \
   ros-noetic-teleop-twist-keyboard ros-noetic-laser-proc \
@@ -17,23 +16,16 @@ sudo apt-get install ros-noetic-joy ros-noetic-teleop-twist-joy \
   ros-noetic-tf2-tools ros-noetic-robot-localization
 ```
 
-## 2. Create the work space
+## 2. Clone the source code from gitHub and build the packages
 ```bash
 mkdir ~/catkin_ws/src && cd ~/catkin_ws/src
 git clone git@github.com:nguyenhau442001/Differential_Drive_Mobile_Robot.git && cd ..
 catkin_make
 source devel/setup.bash
+source /opt/ros/noetic/setup.bash
 ```
 
-## 3. Create the new package
-```bash
-catkin_create_pkg mobile_robot
-cd ~/catkin_ws
-catkin_make --pkg mobile_robot
-source devel/setup.bash
-```
-
-## 4. Robot description
+## 3. Robot description
   Robot Structure Overview:
   - Chassis (base)
   - 4 Caster links (non-driven support wheels)
@@ -45,7 +37,7 @@ source devel/setup.bash
 <img width="1824" height="759" alt="image" src="https://github.com/user-attachments/assets/bc2bd408-ba4a-40ff-aa22-a653fca2b56f" />
 <img width="1824" height="759" alt="image" src="https://github.com/user-attachments/assets/b5821ce8-12c4-463e-9612-f24e65e3f2ed" />
 <img width="1824" height="759" alt="image" src="https://github.com/user-attachments/assets/b8801daf-88c0-42fd-bf59-0ac4c683639e" />
-Transformation:
+To view the the transformation, please use the below commands:
 
 ```bash
 rosrun tf view_frames
@@ -57,7 +49,7 @@ evince frames.pdf
 <img width="1660" height="355" alt="image" src="https://github.com/user-attachments/assets/f0e7d94b-a6f3-4449-afa0-6563179bcbc4" />
 
 
-## 5. Gmapping
+## 4. SLAM
 Every new shell has to run the commands below to detect the ROS packages.
 ```bash
 echo 'export DISABLE_ROS1_EOL_WARNINGS=1' >> ~/.bashrc
@@ -107,7 +99,7 @@ Fourth terminal: save the map
 rosrun map_server map_saver -f <path_project>/mobile_robot_navigation/maps
 ```
 
-## 6. Navigation
+## 5. Navigation (use DWA algorithm for the path planner)
 ```bash
 cd ~/catkin_ws
 source /opt/ros/noetic/setup.bash
@@ -125,7 +117,7 @@ To move to a goal, click on 2D Nav Goal to set your goal location and pose.
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/ca103906-d5ed-46c6-affd-837b079a9dd5" />
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/aee2a359-069e-47e6-b6ca-138fd3075ada" />
 
-## 7. Controller:
+## 6. Controller:
 ### Verify the velocity
 ```bash
 cd ~/catkin_ws
@@ -146,17 +138,8 @@ To monitor the acceleration, add this topic in rqt_tool tool: /imu/linear_accele
 
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/3ed75f91-36b0-4e06-a09b-962bb9176319" />
 
-
-The case: The robot should be able to achieve 5m/s velocity within 5s from stand still, and should completely stop within 1s.
-
-
-```bash
-cd ~/catkin_ws
-source /opt/ros/noetic/setup.bash
-source devel/setup.bash
-roslaunch mobile_robot_gazebo mobile_robot_empty_world.launch
-roslaunch mobile_robot_teleop trapezoid_profile_controller.launch
-```
+---------------
+# The case: The robot should be able to achieve 5m/s velocity within 5s from stand still, and should completely stop within 1s.
 
 To meet the requirement, a controller was created to control the robot based on the pilot below:
 
@@ -201,7 +184,16 @@ Instead of directly sending the velocity set point (v_target) to the robot,
 we gradually ramp up and ramp down the velocity over time (dt). This prevents
 jerky motion and helps maintain robot stability.
 
-  
+
 Therefore, with this approach, the trapezoid_cmd_vel_node was created to send the desired velocity to the robot.
+
+```bash
+cd ~/catkin_ws
+source /opt/ros/noetic/setup.bash
+source devel/setup.bash
+roslaunch mobile_robot_gazebo mobile_robot_empty_world.launch
+roslaunch mobile_robot_teleop trapezoid_profile_controller.launch
+```
+
 As you can see, the robot can go from standing still (t = 9) to reaching 5 m/s (t = 14), and then decelerate from 5 m/s (t = 14) to 0 m/s (t = 15).
 <img width="1827" height="746" alt="image" src="https://github.com/user-attachments/assets/e92fa2c7-2004-4760-afc4-ae60f8adcf35" />
