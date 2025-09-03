@@ -1,5 +1,11 @@
 # Project Description:
 Choose Gazebo and ROS1 Noetic, and build a simulation for a mobile robot.
+- **mobile_robot_description** → Contains the robot’s geometry and physical description.
+- **mobile_robot_gazebo** → Contains the launch files for spawning the robot in Gazebo.
+- **mobile_robot_navigation** → Contains the launch files to run path planners, such as DWA.
+- **mobile_robot_slam** → Contains the launch files for running SLAM.
+- **mobile_robot_teleop** → Contains Python nodes for teleoperation, including keyboard control and differential drive controller.
+
 
 ## 1. Environment Setup
 Install ROS1 Noetic: https://wiki.ros.org/noetic/Installation/Ubuntu
