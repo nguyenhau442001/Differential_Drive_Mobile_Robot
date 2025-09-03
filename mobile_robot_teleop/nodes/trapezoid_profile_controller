@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+import rospy
+from geometry_msgs.msg import Twist
+import math
+
+def trapezoid_profile(v_target, t_acc, t_cruise, t_dec, dt=0.05):
+    """
+    Generate a trapezoidal velocity profile. 
+    Return a list of (time, velocity).
+    """
+    profile = []
+    t = 0.0
+    # Accel
+    while t < t_acc:
+        v = (t / t_acc) * v_target
+        profile.append((t, v))
+        t += dt
+    # Hold
+    while t < t_acc + t_cruise:
+        profile.append((t, v_target))
+        t += dt
+    # Deccel
+    while t < t_acc + t_cruise + t_dec:
+        tau = (t - (t_acc + t_cruise)) / t_dec
+        v = v_target * (1 - tau)
+        profile.append((t, max(v, 0)))
+        t += dt
+    return profile
+
+def run_node():
+    rospy.init_node("trapezoid_cmdvel_node")
+    pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
+
+    # Tham số
+    v_target = rospy.get_param("~v_target", 5)     # m/s
+    t_acc = rospy.get_param("~t_acc", 5)           # s
+    t_cruise = rospy.get_param("~t_cruise", 0.1)   # s
+    t_dec = rospy.get_param("~t_dec", 1.0)         # s
+    dt = rospy.get_param("~dt", 0.05)              # s
+
+    profile = trapezoid_profile(v_target, t_acc, t_cruise, t_dec, dt)
+
+    rate = rospy.Rate(1.0/dt)
+    for t, v in profile:
+        msg = Twist()
+        msg.linear.x = v
+        msg.angular.z = 0.0
+        pub.publish(msg)
+        rate.sleep()
+
+    # stop
+    msg = Twist()
+    pub.publish(msg)
+
+if __name__ == "__main__":
+    try:
+        run_node()
+    except rospy.ROSInterruptException:
+        pass

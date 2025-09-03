@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="mobile_robot_teleop" type="trapezoid_profile_controller" name="trapezoid_profile_controller"  output="screen">
+  </node>
+</launch>
