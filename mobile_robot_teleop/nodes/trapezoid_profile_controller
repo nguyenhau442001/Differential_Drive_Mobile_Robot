@@ -1,59 +1,142 @@
 #!/usr/bin/env python3
-import rospy
-from geometry_msgs.msg import Twist
-import math
+"""
+ROS Node: Trapezoidal Velocity Controller
+-----------------------------------------
+This node generates a trapezoidal velocity profile and publishes
+linear velocity commands to the /cmd_vel topic.
 
-def trapezoid_profile(v_target, t_acc, t_cruise, t_dec, dt=0.05):
+The profile consists of three phases:
+    1. **Acceleration Phase** - Linearly increases velocity from 0 to v_target
+    2. **Cruise Phase**       - Maintains a constant target velocity
+    3. **Deceleration Phase** - Smoothly decreases velocity to 0 using a cosine function
+
+Why discretize?
+---------------
+Instead of directly sending the velocity set point (v_target) to the robot,
+we gradually ramp up and ramp down the velocity over time (dt). This prevents
+jerky motion and helps maintain robot stability.
+"""
+
+import rospy
+import math
+from geometry_msgs.msg import Twist
+
+# Default time step (s) for discretizing the velocity profile
+DEFAULT_DT = 0.01
+
+def trapezoid_profile(v_target, t_acc, t_cruise, t_dec, dt=DEFAULT_DT):
     """
-    Generate a trapezoidal velocity profile. 
-    Return a list of (time, velocity).
+    Generate a velocity profile based on a trapezoidal motion curve.
+
+    Args:
+        v_target (float): Target velocity in m/s
+        t_acc (float): Duration of the acceleration phase in seconds
+        t_cruise (float): Duration of the constant cruise phase in seconds
+        t_dec (float): Duration of the deceleration phase in seconds
+        dt (float): Time step for discretization (sampling rate)
+
+    Returns:
+        list of tuples: A list of (time, velocity) pairs representing
+                        the entire velocity profile.
     """
     profile = []
     t = 0.0
-    # Accel
+
+    # Ensure t_acc and t_dec are never zero to avoid division by zero errors
+    t_acc = max(t_acc, 0.001)
+    t_dec = max(t_dec, 0.001)
+
+    # -----------------------------
+    # 1. Acceleration Phase
+    # -----------------------------
+    # Velocity increases linearly from 0 to v_target
     while t < t_acc:
-        v = (t / t_acc) * v_target
-        profile.append((t, v))
+        v = (t / t_acc) * v_target  # Linear interpolation
+        profile.append((t, min(v, v_target)))  # Cap at v_target
         t += dt
-    # Hold
+
+    # -----------------------------
+    # 2. Cruise Phase
+    # -----------------------------
+    # Maintain velocity at v_target
     while t < t_acc + t_cruise:
         profile.append((t, v_target))
         t += dt
-    # Deccel
+
+    # -----------------------------
+    # 3. Deceleration Phase
+    # -----------------------------
+    # Smoothly reduce velocity using a cosine shape:
+    # v(t) = 0.5 * v_target * (1 + cos(pi * tau))
+    # Where tau goes from 0 → 1 across the deceleration period
     while t < t_acc + t_cruise + t_dec:
-        tau = (t - (t_acc + t_cruise)) / t_dec
-        v = v_target * (1 - tau)
-        profile.append((t, max(v, 0)))
+        tau = (t - (t_acc + t_cruise)) / t_dec  # Normalize time to [0, 1]
+        v = 0.5 * v_target * (1 + math.cos(math.pi * tau))
+        profile.append((t, max(v, 0.0)))  # Ensure velocity never goes negative
         t += dt
+
     return profile
 
+
 def run_node():
-    rospy.init_node("trapezoid_cmdvel_node")
+    """
+    Main function to run the ROS node.
+    Reads parameters, generates the velocity profile, and publishes Twist messages.
+    """
+    rospy.init_node("trapezoid_cmd_vel_node")
+
+    v_target = 5.0      # Target velocity (m/s)
+    t_acc    = 5.0      # Acceleration duration (s)
+    # t_cruise + t_dec should equal 1.0 second
+    t_cruise = 0.2      # Cruise duration (s)
+    t_dec    = 0.8      # Deceleration duration (s)
+    dt = DEFAULT_DT     # Time step for updates (s)
+    max_vel_limit = 6.0 # Safety velocity limit (m/s)
+
+    # ------------------------------------------------------
+    # Create publisher for /cmd_vel topic
+    # ------------------------------------------------------
     pub = rospy.Publisher("/cmd_vel", Twist, queue_size=10)
 
-    # Tham số
-    v_target = rospy.get_param("~v_target", 5)     # m/s
-    t_acc = rospy.get_param("~t_acc", 5)           # s
-    t_cruise = rospy.get_param("~t_cruise", 0.1)   # s
-    t_dec = rospy.get_param("~t_dec", 1.0)         # s
-    dt = rospy.get_param("~dt", 0.05)              # s
-
+    # ------------------------------------------------------
+    # Generate trapezoidal velocity profile
+    # ------------------------------------------------------
     profile = trapezoid_profile(v_target, t_acc, t_cruise, t_dec, dt)
+    rospy.loginfo(f"Generated velocity profile with {len(profile)} points")
 
-    rate = rospy.Rate(1.0/dt)
-    for t, v in profile:
+    # ROS rate controller to publish at real-time speed
+    rate = rospy.Rate(1.0 / dt)
+    rospy.loginfo("Starting trapezoidal velocity profile...")
+
+    # ------------------------------------------------------
+    # Publish velocity commands to /cmd_vel
+    # ------------------------------------------------------
+    for current_time, velocity in profile:
+        # Stop if ROS shuts down (Ctrl+C or shutdown signal)
+        if rospy.is_shutdown():
+            break
+
+        # Clamp velocity to safety limits
+        safe_velocity = min(max(velocity, 0.0), max_vel_limit)
+
+        # Prepare Twist message
         msg = Twist()
-        msg.linear.x = v
-        msg.angular.z = 0.0
+        msg.linear.x = safe_velocity  # Forward velocity
+        msg.angular.z = 0.0           # No rotation
+
         pub.publish(msg)
         rate.sleep()
 
-    # stop
-    msg = Twist()
-    pub.publish(msg)
+    # ------------------------------------------------------
+    # Ensure the robot completely stops at the end
+    # ------------------------------------------------------
+    pub.publish(Twist())
+    rospy.loginfo("Profile complete. Robot stopped.")
+
 
 if __name__ == "__main__":
     try:
         run_node()
     except rospy.ROSInterruptException:
+        # Graceful shutdown on ROS interrupt
         pass
