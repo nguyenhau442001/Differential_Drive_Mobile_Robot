@@ -104,7 +104,7 @@ CTRL-C to quit
 
 Fourth terminal: save the map
 ```bash
-rosrun map_server map_saver -f mobile_robot/maps/
+rosrun map_server map_saver -f <path_project>/mobile_robot_navigation/maps
 ```
 
 ## 6. Navigation
@@ -114,6 +114,7 @@ source /opt/ros/noetic/setup.bash
 source devel/setup.bash
 
 # After completing the map, run the commands below to execute navigation.
+roslaunch mobile_robot_gazebo mobile_robot_10x10_world.launch
 roslaunch mobile_robot_navigation mobile_robot_navigation.launch
 ```
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/21b207db-d197-46dd-814f-11dad260dea4" />
@@ -124,11 +125,15 @@ To move to a goal, click on 2D Nav Goal to set your goal location and pose.
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/ca103906-d5ed-46c6-affd-837b079a9dd5" />
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/aee2a359-069e-47e6-b6ca-138fd3075ada" />
 
-
-## Verify the velocity
+## 7. Controller:
+### Verify the velocity
 ```bash
+cd ~/catkin_ws
+source /opt/ros/noetic/setup.bash
+source devel/setup.bash
 rosrun rqt_plot rqt_plot
 roslaunch mobile_robot_gazebo mobile_robot_empty_world.launch
+roslaunch mobile_robot_teleop mobile_robot_teleop_key.launch
 ```
 
 Add two below topics in the plots, just to check the velocity response by increasing the velocity slowly.
@@ -137,34 +142,66 @@ Add two below topics in the plots, just to check the velocity response by increa
 
 /odom/twist/twist/linear/x => Process Variable (PV)
 
+To monitor the acceleration, add this topic in rqt_tool tool: /imu/linear_acceleration/x
+
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/3ed75f91-36b0-4e06-a09b-962bb9176319" />
 
 
 The case: The robot should be able to achieve 5m/s velocity within 5s from stand still, and should completely stop within 1s.
 
-To set 5m/s:
+
 ```bash
-rostopic pub /cmd_vel geometry_msgs/Twist "linear:
-  x: 5.0
-  y: 0.0
-  z: 0.0
-angular:
-  x: 0.0
-  y: 0.0
-  z: 0.0" -r 100
+cd ~/catkin_ws
+source /opt/ros/noetic/setup.bash
+source devel/setup.bash
+roslaunch mobile_robot_gazebo mobile_robot_empty_world.launch
+roslaunch mobile_robot_teleop trapezoid_profile_controller.launch
 ```
 
-To stop:
-```bash
-rostopic pub /cmd_vel geometry_msgs/Twist "linear:
-  x: 0.0
-  y: 0.0
-  z: 0.0
-angular:
-  x: 0.0
-  y: 0.0
-  z: 0.0" -r 100
+To meet the requirement, a controller was created to control the robot based on the pilot below:
+
+The motion has three distinct phases:
+
+Phases Explained
+
+- Acceleration phase (t_acc): Velocity increases linearly from 0 → v_target.
+
+- Cruise phase (t_cruise):    Velocity stays constant at v_target.
+
+- Deceleration phase (t_dec): Velocity smoothly decreases to 0 using a cosine function for smooth stopping.
+
+```
+velocity
+   ^
+   |           ┌──────────────┐
+   |          /|              |\
+   |         / |              | \
+   |        /  |              |  \
+   |       /   |              |   \
+   +-----------------------------------> time
+       Accel     Cruise       Decel
 ```
 
-To monitor the acceleration:
-Add topic: /imu/linear_acceleration/x
+ROS Node: Trapezoidal Velocity Controller
+-----------------------------------------
+This node generates a trapezoidal velocity profile and publishes
+linear velocity commands to the /cmd_vel topic.
+
+The profile consists of three phases:
+
+    1. Acceleration Phase - Linearly increases velocity from 0 to v_target
+
+    2. Cruise Phase       - Maintains a constant target velocity
+  
+    3. Deceleration Phase - Smoothly decreases velocity to 0 using a cosine function
+
+Why discretize?
+---------------
+Instead of directly sending the velocity set point (v_target) to the robot,
+we gradually ramp up and ramp down the velocity over time (dt). This prevents
+jerky motion and helps maintain robot stability.
+
+  
+Therefore, with this approach, the trapezoid_cmd_vel_node was created to send the desired velocity to the robot.
+As you can see, the robot can go from standing still (t = 9) to reaching 5 m/s (t = 14), and then decelerate from 5 m/s (t = 14) to 0 m/s (t = 15).
+<img width="1827" height="746" alt="image" src="https://github.com/user-attachments/assets/e92fa2c7-2004-4760-afc4-ae60f8adcf35" />
