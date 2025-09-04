@@ -66,7 +66,6 @@ source devel/setup.bash
 
 ```bash
 # First terminal: launch the mobile robot in Gazebo (in default, the 10x10 world is being used)
-# Choose one in 3 below command
 roslaunch mobile_robot_gazebo mobile_robot_10x10_world.launch
 ```
 <img width="1842" height="787" alt="image" src="https://github.com/user-attachments/assets/73d45c8f-ca78-4eba-aee3-7f56daa7a36d" />
@@ -123,7 +122,7 @@ To move to a goal, click on 2D Nav Goal to set your goal location and pose.
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/ca103906-d5ed-46c6-affd-837b079a9dd5" />
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/aee2a359-069e-47e6-b6ca-138fd3075ada" />
 
-## 6. Controller:
+## 6. Controller
 ### Verify the velocity
 ```bash
 cd ~/catkin_ws
