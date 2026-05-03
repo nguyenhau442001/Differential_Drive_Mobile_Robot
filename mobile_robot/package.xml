@@ -9,11 +9,10 @@
   <license>BSD</license>
   <author email="nguyenhau442001@gmail.com">Nguyen Ngoc Hau</author>
   <maintainer email="nguyenhau442001@gmail.com">Nguyen Ngoc Hau</maintainer>
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>mobile_robot_description</exec_depend>
   <exec_depend>mobile_robot_navigation</exec_depend>
   <exec_depend>mobile_robot_slam</exec_depend>
   <exec_depend>mobile_robot_teleop</exec_depend>
   <exec_depend>mobile_robot_gazebo</exec_depend>
-  <export><metapackage/></export>
 </package>
