@@ -2,26 +2,18 @@
 <robot name="mobile_robot">
   <!-- Differential Drive Plugin -->
   <gazebo>
-    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
-      <legacyMode>false</legacyMode>
-      <alwaysOn>true</alwaysOn>
-      <updateRate>200</updateRate>
-      <leftJoint>left_wheel_joint</leftJoint>
-      <rightJoint>right_wheel_joint</rightJoint>
-      <wheelSeparation>0.453</wheelSeparation>
-      <wheelDiameter>0.144</wheelDiameter>
-      <wheelAcceleration>100</wheelAcceleration>
-      <wheelTorque>100</wheelTorque>
-      <commandTopic>cmd_vel</commandTopic>
-      <publishWheelTF>false</publishWheelTF>
-      <publishTf>true</publishTf>
-      <publishWheelJointState>true</publishWheelJointState>
-      <publishOdomTF>true</publishOdomTF>
-      <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
-      <odometrySource>world</odometrySource>
-      <robotBaseFrame>chassis</robotBaseFrame>
-      <rosDebugLevel>na</rosDebugLevel>
+    <plugin
+      filename="gz-sim-diff-drive-system"
+      name="gz::sim::systems::DiffDrive">
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>0.453</wheel_separation>
+      <wheel_radius>0.072</wheel_radius>
+      <topic>cmd_vel</topic>
+      <odom_topic>odom</odom_topic>
+      <frame_id>odom</frame_id>
+      <child_frame_id>chassis</child_frame_id>
+      <max_linear_acceleration>1</max_linear_acceleration>
     </plugin>
   </gazebo>
 
