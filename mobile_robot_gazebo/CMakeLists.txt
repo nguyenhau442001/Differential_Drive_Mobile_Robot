@@ -1,70 +1,27 @@
-################################################################################
-# Set minimum required version of cmake, project name and compile options
-################################################################################
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(mobile_robot_gazebo)
-cmake_policy(SET CMP0054 NEW)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 
-################################################################################
-# Find catkin packages and libraries for catkin and system dependencies
-################################################################################
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  std_msgs
-  sensor_msgs
-  geometry_msgs
-  nav_msgs
-  tf
-  gazebo_ros
-)
+# Find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(ros_gz REQUIRED)
 
-find_package(gazebo REQUIRED)
-
-################################################################################
-# Setup for python modules and scripts
-################################################################################
-
-################################################################################
-# Declare ROS messages, services and actions
-################################################################################
-
-################################################################################
-# Declare ROS dynamic reconfigure parameters
-################################################################################
-
-################################################################################
-# Declare catkin specific configuration to be passed to dependent projects
-################################################################################
-catkin_package(
-  CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs nav_msgs tf gazebo_ros
-  DEPENDS GAZEBO
-)
-
-################################################################################
-# Build
-################################################################################
 link_directories(${GAZEBO_LIBRARY_DIRS})
 
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-  ${GAZEBO_INCLUDE_DIRS}
+# Install resources
+install(DIRECTORY launch worlds
+  DESTINATION share/${PROJECT_NAME}
 )
 
-################################################################################
-# Install
-################################################################################
-
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
-
-install(DIRECTORY launch models rviz worlds 
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-)
-
-################################################################################
-# Test
-################################################################################
+ament_package()
