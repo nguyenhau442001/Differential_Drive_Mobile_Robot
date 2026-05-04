@@ -29,14 +29,14 @@
     <!-- Chassis Visual -->
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry><mesh filename="package://mobile_robot_description/meshes/chassis.STL"/></geometry>
+      <geometry><mesh filename="$(find mobile_robot_description)/meshes/chassis.STL"/></geometry>
       <material name=""><color rgba="0.647 0.620 0.588 1"/></material>
     </visual>
 
     <!-- Chassis Collision -->
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <geometry><mesh filename="package://mobile_robot_description/meshes/chassis.STL"/></geometry>
+      <geometry><mesh filename="$(find mobile_robot_description)/meshes/chassis.STL"/></geometry>
     </collision>
   </link>
 
@@ -102,12 +102,12 @@
     </inertial>
     <visual>
       <origin xyz="0 0 0"/>
-      <geometry><mesh filename="package://mobile_robot_description/meshes/left_wheel_link.STL"/></geometry>
+      <geometry><mesh filename="$(find mobile_robot_description)/meshes/left_wheel_link.STL"/></geometry>
       <material name=""><color rgba="0 0 0 1"/></material>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
-      <geometry><mesh filename="package://mobile_robot_description/meshes/left_wheel_link.STL"/></geometry>
+      <geometry><mesh filename="$(find mobile_robot_description)/meshes/left_wheel_link.STL"/></geometry>
     </collision>
   </link>
 
@@ -131,12 +131,12 @@
     </inertial>
     <visual>
       <origin xyz="0 0 0"/>
-      <geometry><mesh filename="package://mobile_robot_description/meshes/right_wheel_link.STL"/></geometry>
+      <geometry><mesh filename="$(find mobile_robot_description)/meshes/right_wheel_link.STL"/></geometry>
       <material name=""><color rgba="0.79 0.82 0.93 1"/></material>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
-      <geometry><mesh filename="package://mobile_robot_description/meshes/right_wheel_link.STL"/></geometry>
+      <geometry><mesh filename="$(find mobile_robot_description)/meshes/right_wheel_link.STL"/></geometry>
     </collision>
   </link>
 
@@ -172,12 +172,12 @@
     </inertial>
     <visual>
       <origin xyz="0 0 0"/>
-      <geometry><mesh filename="package://mobile_robot_description/meshes/lidar.STL"/></geometry>
+      <geometry><mesh filename="$(find mobile_robot_description)/meshes/lidar.STL"/></geometry>
       <material name=""><color rgba="1 1 1 1"/></material>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
-      <geometry><mesh filename="package://mobile_robot_description/meshes/lidar.STL"/></geometry>
+      <geometry><mesh filename="$(find mobile_robot_description)/meshes/lidar.STL"/></geometry>
     </collision>
   </link>
 
