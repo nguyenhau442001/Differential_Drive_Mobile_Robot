@@ -1,12 +1,27 @@
-## ! DO NOT MANUALLY INVOKE THIS setup.py, USE CATKIN INSTEAD
+from setuptools import setup
+import os
+from glob import glob
 
-from distutils.core import setup
-from catkin_pkg.python_setup import generate_distutils_setup
+package_name = 'mobile_robot_teleop'
 
-# fetch values from package.xml
-setup_args = generate_distutils_setup(
-    packages=['mobile_robot_teleop'],
-    package_dir={'': 'src'}
+setup(
+    name=package_name,
+    version='1.0.0',
+    packages=[package_name],
+    data_files=[
+        ('share/ament_index/resource_index/packages', ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='Nguyen Ngoc Hau',
+    maintainer_email='nguyenhau442001@gmail.com',
+    description='Provides teleoperation using keyboard for Mobile Robot.',
+    license='BSD',
+    entry_points={
+        'console_scripts': [
+            'mobile_robot_teleop_key = mobile_robot_teleop.mobile_robot_teleop_key:main',
+        ],
+    },
 )
-
-setup(**setup_args)
