@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
 <robot name="mobile_robot">
+  <!-- Joint State Publisher — needed for robot_state_publisher to broadcast wheel/caster TF -->
+  <gazebo>
+    <plugin filename="gz-sim-joint-state-publisher-system"
+            name="gz::sim::systems::JointStatePublisher"/>
+  </gazebo>
+
   <!-- Differential Drive Plugin -->
   <gazebo>
     <plugin

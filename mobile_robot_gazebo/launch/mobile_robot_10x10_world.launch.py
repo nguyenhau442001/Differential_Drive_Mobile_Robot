@@ -79,6 +79,19 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Bridge joint states so robot_state_publisher can publish wheel/caster TF
+    joint_state_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=[
+            '/world/default/model/mobile_robot/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
+        ],
+        remappings=[
+            ('/world/default/model/mobile_robot/joint_state', '/joint_states'),
+        ],
+        output='screen'
+    )
+
     return LaunchDescription([
         # Force EGL to use X11 platform so the sensor render thread can use
         # llvmpipe (software OpenGL) via GLX instead of failing on EGL device mode
@@ -90,4 +103,5 @@ def generate_launch_description():
         state_pub,
         spawn_robot,
         ros_gz_bridge,
+        joint_state_bridge,
     ])
