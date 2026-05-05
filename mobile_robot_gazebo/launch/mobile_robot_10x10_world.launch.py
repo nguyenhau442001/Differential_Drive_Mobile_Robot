@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, TimerAction, IncludeLaunchDescription, SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetEnvironmentVariable
 from launch.substitutions import LaunchConfiguration, Command
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
@@ -88,6 +88,6 @@ def generate_launch_description():
         declare_z,
         gz_sim,
         state_pub,
-        TimerAction(period=10.0, actions=[spawn_robot]),
+        spawn_robot,
         ros_gz_bridge,
     ])
