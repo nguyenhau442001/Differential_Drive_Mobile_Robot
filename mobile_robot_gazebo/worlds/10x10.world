@@ -12,6 +12,11 @@
     <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
     <!-- Required to activate IMU sensors defined in robot URDF -->
     <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+    <!-- Required to activate LiDAR sensors defined in robot URDF -->
+    <!-- EGL_PLATFORM=x11 is set in the launch file so ogre2 uses X11 EGL (works with llvmpipe) -->
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
 
     <light name='sun' type='directional'>
       <cast_shadows>1</cast_shadows>

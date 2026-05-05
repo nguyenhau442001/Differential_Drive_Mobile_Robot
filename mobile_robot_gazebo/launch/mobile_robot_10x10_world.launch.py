@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, TimerAction, IncludeLaunchDescription
+from launch.actions import DeclareLaunchArgument, TimerAction, IncludeLaunchDescription, SetEnvironmentVariable
 from launch.substitutions import LaunchConfiguration, Command
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
@@ -71,13 +71,18 @@ def generate_launch_description():
             '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
             # odom: Gz → ROS  (DiffDrive plugin → nav stack)
             '/odom@nav_msgs/msg/Odometry[gz.msgs.Odometry',
-            # laser scan: Gz → ROS
-            '/mobile_robot/laser/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
+            # imu: Gz → ROS  (topic matches <topic> in sensor definition)
+            '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
+            # laser scan: Gz → ROS  (topic matches <topic> in sensor definition)
+            '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
         ],
         output='screen'
     )
 
     return LaunchDescription([
+        # Force EGL to use X11 platform so the sensor render thread can use
+        # llvmpipe (software OpenGL) via GLX instead of failing on EGL device mode
+        SetEnvironmentVariable('EGL_PLATFORM', 'x11'),
         declare_x,
         declare_y,
         declare_z,

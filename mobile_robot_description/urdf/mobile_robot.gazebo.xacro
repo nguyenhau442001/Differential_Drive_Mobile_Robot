@@ -102,14 +102,16 @@
     </sensor>
   </gazebo>
 
-  <!-- LIDAR sensor --> 
+  <!-- LiDAR sensor (Gazebo Sim) -->
   <gazebo reference="lidar_link">
-    <material>Gazebo/FlatBlack</material>
-    <sensor type="ray" name="lds_lfcd_sensor">
+    <sensor name='gpu_lidar' type='gpu_lidar'>
       <pose>0 0 0.02 0 0 0</pose>
+      <always_on>true</always_on>
       <visualize>true</visualize>
       <update_rate>5</update_rate>
-      <ray>
+      <topic>scan</topic>
+      <gz_frame_id>lidar_link</gz_frame_id>
+      <lidar>
         <scan>
           <horizontal>
             <samples>720</samples>
@@ -128,11 +130,7 @@
           <mean>0.0</mean>
           <stddev>0.01</stddev>
         </noise>
-      </ray>
-      <plugin name="gazebo_ros_lds_lfcd_controller" filename="libgazebo_ros_laser.so">
-        <topicName>/mobile_robot/laser/scan</topicName>
-        <frameName>lidar_link</frameName>
-      </plugin>
+      </lidar>
     </sensor>
   </gazebo>
 </robot>
