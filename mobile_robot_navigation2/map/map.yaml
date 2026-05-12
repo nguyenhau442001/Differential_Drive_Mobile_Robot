@@ -1,4 +1,4 @@
-image: /home/hau/catkin_ws/src/Differential_Drive_Mobile_Robot/mobile_robot_navigation/maps/map.pgm
+image: map.pgm
 resolution: 0.050000
 origin: [-10.000000, -10.000000, 0.000000]
 negate: 0

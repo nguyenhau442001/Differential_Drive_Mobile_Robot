@@ -2,7 +2,7 @@
 Build a simulation for a mobile robot using **Gazebo Sim (Harmonic)** and **ROS 2 Jazzy**.
 - **mobile_robot_description** → Robot geometry and physical description (URDF/xacro).
 - **mobile_robot_gazebo** → Launch files for spawning the robot in Gazebo and bridging topics.
-- **mobile_robot_navigation2** → Nav2 launch and configuration (AMCL, MPPI controller, NavFn planner).
+- **mobile_robot_navigation2** → Nav2 launch and configuration (AMCL, DWB controller, NavFn planner).
 - **mobile_robot_teleop** → Python nodes for teleoperation (keyboard control, trapezoidal velocity controller).
 
 
@@ -95,27 +95,25 @@ CTRL-C to quit
 
 Fourth terminal: save the map (creates `map.yaml` and `map.pgm`)
 ```bash
-<<<<<<< Updated upstream
-rosrun map_server map_saver -f <path_project>/mobile_robot_navigation/maps
-=======
 ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/Differential_Drive_Mobile_Robot/mobile_robot_navigation2/map/map
->>>>>>> Stashed changes
 ```
 
-## 5. Navigation (Nav2 with MPPI controller and NavFn planner)
+## 5. Navigation (Nav2 with DWB controller and NavFn planner)
+Every new shell needs the workspace sourced:
 ```bash
 cd ~/ros2_ws
 source /opt/ros/jazzy/setup.bash
 source install/setup.bash
+```
 
-# After completing the map, run the commands below to execute navigation.
-<<<<<<< Updated upstream
-roslaunch mobile_robot_gazebo mobile_robot_10x10_world.launch
-roslaunch mobile_robot_navigation mobile_robot_navigation.launch
-=======
+```bash
+# First terminal: launch the mobile robot in Gazebo (10x10 world by default)
 ros2 launch mobile_robot_gazebo mobile_robot_10x10_world.launch.py
+```
+
+```bash
+# Second terminal: launch Nav2 with the saved map
 ros2 launch mobile_robot_navigation2 navigation2.launch.py
->>>>>>> Stashed changes
 ```
 <img width="1817" height="835" alt="image" src="https://github.com/user-attachments/assets/21b207db-d197-46dd-814f-11dad260dea4" />
 
