@@ -1,5 +1,11 @@
 <?xml version="1.0"?>
-<robot name="mobile_robot">
+<robot name="mobile_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Multi-robot support: empty robot_name => no prefix (backwards compatible). -->
+  <xacro:arg name="robot_name" default=""/>
+  <xacro:property name="robot_name" value="$(arg robot_name)"/>
+  <xacro:property name="ns_topic" value="${('/' + robot_name) if robot_name else ''}"/>
+  <xacro:property name="ns_frame" value="${(robot_name + '/') if robot_name else ''}"/>
+
   <!-- Joint State Publisher — needed for robot_state_publisher to broadcast wheel/caster TF -->
   <gazebo>
     <plugin filename="gz-sim-joint-state-publisher-system"
@@ -15,10 +21,10 @@
       <right_joint>right_wheel_joint</right_joint>
       <wheel_separation>0.453</wheel_separation>
       <wheel_radius>0.072</wheel_radius>
-      <topic>cmd_vel</topic>
-      <odom_topic>odom</odom_topic>
-      <frame_id>odom</frame_id>
-      <child_frame_id>chassis</child_frame_id>
+      <topic>${ns_topic}/cmd_vel</topic>
+      <odom_topic>${ns_topic}/odom</odom_topic>
+      <frame_id>${ns_frame}odom</frame_id>
+      <child_frame_id>${ns_frame}chassis</child_frame_id>
       <max_linear_acceleration>1</max_linear_acceleration>
     </plugin>
   </gazebo>
@@ -91,8 +97,8 @@
       <always_on>true</always_on>
       <update_rate>100</update_rate>
       <visualize>true</visualize>
-      <topic>imu</topic>
-      <gz_frame_id>imu_link</gz_frame_id>
+      <topic>${ns_topic}/imu</topic>
+      <gz_frame_id>${ns_frame}imu_link</gz_frame_id>
       <imu>
         <angular_velocity>
           <x><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev><bias_mean>0.0000075</bias_mean><bias_stddev>0.0000008</bias_stddev></noise></x>
@@ -115,8 +121,8 @@
       <always_on>true</always_on>
       <visualize>true</visualize>
       <update_rate>5</update_rate>
-      <topic>scan</topic>
-      <gz_frame_id>lidar_link</gz_frame_id>
+      <topic>${ns_topic}/scan</topic>
+      <gz_frame_id>${ns_frame}lidar_link</gz_frame_id>
       <lidar>
         <scan>
           <horizontal>

@@ -1,0 +1,16 @@
+robots:
+  - name: robot1
+    x: 0.0
+    y: 0.5
+    z: 0.0
+    yaw: 0.0
+  - name: robot2
+    x: 0.0
+    y: -0.5
+    z: 0.0
+    yaw: 0.0
+  - name: robot3
+    x: 1.0
+    y: 0.0
+    z: 0.0
+    yaw: 0.0
