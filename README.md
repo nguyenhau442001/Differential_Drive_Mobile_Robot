@@ -68,13 +68,8 @@ ros2 launch mobile_robot_gazebo mobile_robot_10x10_world.launch.py
 
 
 ```bash
-<<<<<<< Updated upstream
-# Second terminal: launch RViz and get ready to scan the map
-roslaunch mobile_robot_slam mobile_robot_slam.launch
-=======
 # Second terminal: launch slam_toolbox to start building the map
 ros2 launch slam_toolbox online_async_launch.py use_sim_time:=true
->>>>>>> Stashed changes
 ```
 
 <img width="1842" height="787" alt="image" src="https://github.com/user-attachments/assets/9b732f06-5fa5-4dbb-bd24-c7150c04f626" />

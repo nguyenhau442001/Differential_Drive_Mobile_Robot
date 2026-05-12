@@ -12,7 +12,6 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>mobile_robot_description</exec_depend>
   <exec_depend>mobile_robot_navigation</exec_depend>
-  <exec_depend>mobile_robot_slam</exec_depend>
   <exec_depend>mobile_robot_teleop</exec_depend>
   <exec_depend>mobile_robot_gazebo</exec_depend>
 </package>
