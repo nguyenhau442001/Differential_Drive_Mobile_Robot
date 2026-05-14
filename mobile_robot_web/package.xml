@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>mobile_robot_web</name>
+  <version>1.0.0</version>
+  <description>
+    Browser-based visualization for the differential-drive mobile robot.
+    Starts rosbridge_server (WebSocket on :9090) and serves an HTML dashboard
+    that uses roslibjs / ros2djs / ros3djs to render the map, lidar scan,
+    robot pose, goal-setting and teleop.
+  </description>
+  <license>Apache 2.0</license>
+  <author email="nguyenhau442001@gmail.com">Nguyen Ngoc Hau</author>
+  <maintainer email="nguyenhau442001@gmail.com">Nguyen Ngoc Hau</maintainer>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>rosbridge_server</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

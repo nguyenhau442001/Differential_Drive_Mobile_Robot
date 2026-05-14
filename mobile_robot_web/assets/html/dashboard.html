@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Mobile Robot — Dashboard</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+
+<header>
+  <h1>Mobile Robot Dashboard</h1>
+  <span id="status" class="badge bad">disconnected</span>
+  <span id="navStatus" class="badge">Nav: idle</span>
+  <nav class="tabs">
+    <button data-view="2d" class="active">2D</button>
+    <button data-view="3d" disabled title="Coming in the next commit">3D</button>
+  </nav>
+  <span class="spacer"></span>
+</header>
+
+<main>
+  <section id="view-container"></section>
+
+  <aside>
+    <div class="card">
+      <h2>Connection</h2>
+      <div class="row">
+        <span class="mono">ws://</span>
+        <input id="host" value="" style="flex:1;">
+        <span class="mono">:9090</span>
+      </div>
+      <div class="row" style="margin-top:6px;">
+        <button id="connect">Connect</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Click mode</h2>
+      <div class="mode-row">
+        <button id="mode-pan"  class="active">Pan</button>
+        <button id="mode-init">Set Init Pose</button>
+        <button id="mode-goal">Set Goal</button>
+      </div>
+      <div class="row" style="margin-top:6px; color:#999;">
+        Click-drag on the map: click sets position, drag direction sets yaw.
+      </div>
+      <div class="row" style="margin-top:6px;">
+        <button id="cancel-goal" class="danger" style="flex:1;">Cancel current goal</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Navigation</h2>
+      <div class="stat">Goal:              <span id="goalXY"   class="v">--</span></div>
+      <div class="stat">Distance to goal:  <span id="distGoal" class="v">--</span></div>
+      <div class="stat">Plan length:       <span id="planLen"  class="v">--</span></div>
+      <div class="stat">Plan waypoints:    <span id="planN"    class="v">--</span></div>
+      <div class="stat">Distance traveled: <span id="trailLen" class="v">0.00 m</span></div>
+      <div class="stat">ETA @ current v:   <span id="eta"      class="v">--</span></div>
+    </div>
+
+    <div class="card">
+      <h2>Teleop</h2>
+      <div id="joy"><div id="joy-knob"></div></div>
+      <div class="vel-row"><span>linear</span><span id="vlin">0.00 m/s</span></div>
+      <div class="vel-row"><span>angular</span><span id="vang">0.00 rad/s</span></div>
+      <div class="row" style="margin-top:6px;">
+        <label style="flex:1;">max v <span id="vmaxLbl">0.5</span> m/s
+          <input id="vmax" type="range" min="0.05" max="1.5" step="0.05" value="0.5">
+        </label>
+      </div>
+      <div class="row">
+        <label style="flex:1;">max ω <span id="wmaxLbl">1.0</span> rad/s
+          <input id="wmax" type="range" min="0.1" max="3.0" step="0.1" value="1.0">
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Pose <span id="poseSrc" class="badge">--</span></h2>
+      <div class="stat">x:   <span id="px"   class="v mono">--</span></div>
+      <div class="stat">y:   <span id="py"   class="v mono">--</span></div>
+      <div class="stat">yaw: <span id="pyaw" class="v mono">--</span></div>
+      <div class="stat">v:   <span id="ov"   class="v mono">--</span></div>
+      <div class="stat">ω:   <span id="ow"   class="v mono">--</span></div>
+    </div>
+
+    <!-- View-specific cards injected here by the fragment loader. -->
+    <div id="view-sidebar"></div>
+  </aside>
+</main>
+
+<!-- 3rd-party libs -->
+<script src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/roslib@1.4.1/build/roslib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/easeljs@1.0.2/lib/easeljs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ros2d@0.9.0/build/ros2d.min.js"></script>
+
+<!-- App scripts. Load order matters: ros.js exposes RosApp, view*.js
+     register their View modules, dashboard.js wires it all together. -->
+<script src="/js/ros.js"></script>
+<script src="/js/view2d.js"></script>
+<script src="/js/dashboard.js"></script>
+</body>
+</html>

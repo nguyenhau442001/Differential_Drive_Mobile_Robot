@@ -1,0 +1,234 @@
+/* dashboard.css — Compiled from scss/dashboard.scss. Do not edit by hand;
+   edit the SCSS and run scss/build.sh. */
+
+/* ---------- Base ---------- */
+:root { color-scheme: dark; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #111;
+  color: #eee;
+  font-family: system-ui, sans-serif;
+}
+
+.mono   { font-family: ui-monospace, monospace; color: #bbb; }
+.spacer { flex: 1; }
+
+/* ---------- Header ---------- */
+header {
+  padding: 8px 12px;
+  background: #1c1c1c;
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+header h1 { font-size: 16px; margin: 0; font-weight: 600; }
+header a  { color: #9cf; text-decoration: none; }
+header a:hover { text-decoration: underline; }
+
+.badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: #333;
+  color: #bbb;
+}
+.badge.ok     { background: #244; color: #9fc; }
+.badge.bad    { background: #522; color: #fbb; }
+.badge.warn   { background: #553; color: #fda; }
+.badge.active { background: #264; color: #cfc; }
+
+.tabs { display: flex; gap: 4px; }
+.tabs button { padding: 4px 10px; font-size: 12px; }
+
+/* ---------- Layout ---------- */
+main {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  height: calc(100vh - 42px);
+}
+
+#view-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+aside {
+  background: #181818;
+  border-left: 1px solid #2a2a2a;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+#view-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ---------- Cards / rows / stats ---------- */
+.card {
+  background: #202020;
+  border: 1px solid #2c2c2c;
+  border-radius: 8px;
+  padding: 10px;
+}
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #9cf;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+.row + .row { margin-top: 4px; }
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+  padding: 2px 0;
+}
+.stat .v { color: #fff; }
+
+.mode-row, .toggle-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.toggle-row button { padding: 4px 8px; font-size: 11px; }
+
+/* ---------- Buttons & inputs ---------- */
+button {
+  background: #2a3a55;
+  color: #eee;
+  border: 1px solid #3a5a7a;
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+button:hover { filter: brightness(1.2); }
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+button:disabled:hover { filter: none; }
+button.active {
+  background: #2a5a3a;
+  border-color: #4a8;
+  color: #fff;
+}
+button.danger {
+  background: #5a2a2a;
+  border-color: #a55;
+}
+
+input[type="text"], input:not([type]) {
+  background: #111;
+  color: #eee;
+  border: 1px solid #333;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+input[type="range"] { width: 100%; }
+
+/* ---------- Teleop joystick ---------- */
+#joy {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 4px auto;
+  border-radius: 50%;
+  background: #262626;
+  border: 1px solid #3a3a3a;
+  touch-action: none;
+  user-select: none;
+}
+
+#joy-knob {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #4a8;
+  top: 70px;
+  left: 70px;
+  pointer-events: none;
+  box-shadow: 0 0 8px rgba(70, 200, 150, 0.4);
+}
+
+.vel-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+}
+
+/* ---------- 2D view (.view-2d fragment) ---------- */
+.view-2d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#map-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+#map-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#legend, #hud {
+  position: absolute;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+#legend {
+  top: 8px;
+  left: 8px;
+  line-height: 1.55;
+}
+#legend .sw {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  vertical-align: middle;
+  border-radius: 2px;
+}
+
+#hud {
+  bottom: 8px;
+  left: 8px;
+  font-family: ui-monospace, monospace;
+  color: #9cf;
+}

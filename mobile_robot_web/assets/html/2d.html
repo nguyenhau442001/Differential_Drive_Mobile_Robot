@@ -1,0 +1,47 @@
+<!-- 2d.html — Fragment loaded by dashboard.js into dashboard.html.
+     The loader splits this file by data-slot:
+       data-slot="view-main"    → placed in #view-container (centre of the page)
+       data-slot="view-sidebar" → placed in #view-sidebar  (bottom of the right aside)
+     Once injected, dashboard.js calls View2D.init() from js/view2d.js to
+     attach the ROS2D viewer + click handlers + layer toggles. -->
+
+<div data-slot="view-main" class="view-2d">
+  <div id="map-wrap">
+    <div id="map-canvas"></div>
+    <div id="legend">
+      <div><span class="sw" style="background:#4ad"></span> Robot</div>
+      <div><span class="sw" style="background:#f44"></span> Laser scan</div>
+      <div><span class="sw" style="background:#fc4"></span> Goal</div>
+      <div><span class="sw" style="background:#7af"></span> Global plan</div>
+      <div><span class="sw" style="background:#fb6"></span> Local plan</div>
+      <div><span class="sw" style="background:#8f8"></span> Traversed path</div>
+    </div>
+    <div id="hud">
+      <span id="hudPose">x: -- y: -- yaw: --</span>
+      &nbsp;|&nbsp;
+      <span id="hudVel">v: -- ω: --</span>
+    </div>
+  </div>
+</div>
+
+<div data-slot="view-sidebar">
+  <div class="card">
+    <h2>Layers</h2>
+    <div class="toggle-row">
+      <button id="layer-scan"  class="active">Scan</button>
+      <button id="layer-plan"  class="active">Global plan</button>
+      <button id="layer-local" class="active">Local plan</button>
+      <button id="layer-trail" class="active">Trail</button>
+    </div>
+    <div class="row" style="margin-top:6px;">
+      <button id="clear-trail" style="flex:1;">Clear traversed path</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Map</h2>
+    <div class="stat">Resolution: <span id="mapRes"  class="v">--</span></div>
+    <div class="stat">Size:       <span id="mapDim"  class="v">--</span></div>
+    <div class="stat">Origin:     <span id="mapOrig" class="v">--</span></div>
+  </div>
+</div>

@@ -1,0 +1,318 @@
+// dashboard.scss — Source for css/dashboard.css.
+// Recompile with: ./build.sh   (requires `sass`).
+
+// ----------------------------------------------------------------------
+// Variables
+// ----------------------------------------------------------------------
+$bg-page:        #111;
+$bg-header:      #1c1c1c;
+$bg-aside:       #181818;
+$bg-card:        #202020;
+$bg-input:       #111;
+$bg-button:      #2a3a55;
+$bg-button-on:   #2a5a3a;
+$bg-button-danger: #5a2a2a;
+$bg-overlay:     rgba(0, 0, 0, 0.6);
+
+$border-aside:   #2a2a2a;
+$border-header:  #333;
+$border-card:    #2c2c2c;
+$border-input:   #333;
+$border-button:  #3a5a7a;
+$border-on:      #4a8;
+$border-danger:  #a55;
+
+$text-primary:   #eee;
+$text-muted:     #bbb;
+$text-dim:       #999;
+$text-accent:    #9cf;
+
+$status-colors: (
+  ok:     ( bg: #244, fg: #9fc ),
+  bad:    ( bg: #522, fg: #fbb ),
+  warn:   ( bg: #553, fg: #fda ),
+  active: ( bg: #264, fg: #cfc ),
+);
+
+$radius-card: 8px;
+$radius-pill: 10px;
+$radius-input: 4px;
+$radius-btn: 5px;
+
+$aside-width: 340px;
+$joy-size:    200px;
+$knob-size:   60px;
+
+// ----------------------------------------------------------------------
+// Base
+// ----------------------------------------------------------------------
+:root { color-scheme: dark; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: $bg-page;
+  color: $text-primary;
+  font-family: system-ui, sans-serif;
+}
+
+.mono   { font-family: ui-monospace, monospace; color: $text-muted; }
+.spacer { flex: 1; }
+
+// ----------------------------------------------------------------------
+// Header
+// ----------------------------------------------------------------------
+header {
+  padding: 8px 12px;
+  background: $bg-header;
+  border-bottom: 1px solid $border-header;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  h1 {
+    font-size: 16px;
+    margin: 0;
+    font-weight: 600;
+  }
+
+  a {
+    color: $text-accent;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
+.badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: $radius-pill;
+  background: #333;
+  color: $text-muted;
+
+  @each $name, $c in $status-colors {
+    &.#{$name} {
+      background: map-get($c, bg);
+      color:      map-get($c, fg);
+    }
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+
+  button {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+}
+
+// ----------------------------------------------------------------------
+// Layout
+// ----------------------------------------------------------------------
+main {
+  display: grid;
+  grid-template-columns: 1fr $aside-width;
+  height: calc(100vh - 42px);
+}
+
+#view-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+aside {
+  background: $bg-aside;
+  border-left: 1px solid $border-aside;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+#view-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// ----------------------------------------------------------------------
+// Cards / rows / stats
+// ----------------------------------------------------------------------
+.card {
+  background: $bg-card;
+  border: 1px solid $border-card;
+  border-radius: $radius-card;
+  padding: 10px;
+
+  h2 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: $text-accent;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+
+  & + & { margin-top: 4px; }
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+  padding: 2px 0;
+
+  .v { color: #fff; }
+}
+
+.mode-row, .toggle-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.toggle-row button { padding: 4px 8px; font-size: 11px; }
+
+// ----------------------------------------------------------------------
+// Buttons & inputs
+// ----------------------------------------------------------------------
+button {
+  background: $bg-button;
+  color: $text-primary;
+  border: 1px solid $border-button;
+  border-radius: $radius-btn;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover { filter: brightness(1.2); }
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    &:hover { filter: none; }
+  }
+
+  &.active {
+    background: $bg-button-on;
+    border-color: $border-on;
+    color: #fff;
+  }
+
+  &.danger {
+    background: $bg-button-danger;
+    border-color: $border-danger;
+  }
+}
+
+input[type="text"], input:not([type]) {
+  background: $bg-input;
+  color: $text-primary;
+  border: 1px solid $border-input;
+  padding: 3px 6px;
+  border-radius: $radius-input;
+}
+
+input[type="range"] { width: 100%; }
+
+// ----------------------------------------------------------------------
+// Teleop joystick
+// ----------------------------------------------------------------------
+#joy {
+  position: relative;
+  width: $joy-size;
+  height: $joy-size;
+  margin: 4px auto;
+  border-radius: 50%;
+  background: #262626;
+  border: 1px solid #3a3a3a;
+  touch-action: none;
+  user-select: none;
+}
+
+#joy-knob {
+  position: absolute;
+  width: $knob-size;
+  height: $knob-size;
+  border-radius: 50%;
+  background: #4a8;
+  top: 70px;
+  left: 70px;
+  pointer-events: none;
+  box-shadow: 0 0 8px rgba(70, 200, 150, 0.4);
+}
+
+.vel-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+}
+
+// ----------------------------------------------------------------------
+// 2D view (.view-2d fragment)
+// ----------------------------------------------------------------------
+.view-2d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#map-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+}
+
+#map-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#legend, #hud {
+  position: absolute;
+  background: $bg-overlay;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+#legend {
+  top: 8px;
+  left: 8px;
+  line-height: 1.55;
+
+  .sw {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 6px;
+    vertical-align: middle;
+    border-radius: 2px;
+  }
+}
+
+#hud {
+  bottom: 8px;
+  left: 8px;
+  font-family: ui-monospace, monospace;
+  color: $text-accent;
+}
