@@ -66,7 +66,10 @@ def generate_launch_description():
     ros_gz_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
+        parameters=[{'use_sim_time': True}],
         arguments=[
+            # clock: Gz → ROS  (so use_sim_time consumers can sync)
+            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
             # cmd_vel: ROS → Gz  (keyboard teleop → DiffDrive plugin)
             '/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist',
             # odom: Gz → ROS  (DiffDrive plugin → nav stack)
@@ -75,6 +78,11 @@ def generate_launch_description():
             '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
             # laser scan: Gz → ROS  (topic matches <topic> in sensor definition)
             '/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan',
+            # tf: Gz → ROS  (DiffDrive plugin publishes odom→chassis here)
+            '/model/mobile_robot/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+        ],
+        remappings=[
+            ('/model/mobile_robot/tf', '/tf'),
         ],
         output='screen'
     )
