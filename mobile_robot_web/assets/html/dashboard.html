@@ -90,16 +90,29 @@
   </aside>
 </main>
 
-<!-- 3rd-party libs -->
+<!-- 3rd-party UMD scripts. eventemitter2 is still required by ros2d, even
+     though roslibjs v2 dropped the dependency. -->
 <script src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.9/lib/eventemitter2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/roslib@1.4.1/build/roslib.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/easeljs@1.0.2/lib/easeljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ros2d@0.9.0/build/ros2d.min.js"></script>
 
-<!-- App scripts. Load order matters: ros.js exposes RosApp, view*.js
-     register their View modules, dashboard.js wires it all together. -->
-<script src="/js/ros.js"></script>
-<script src="/js/view2d.js"></script>
-<script src="/js/dashboard.js"></script>
+<!-- roslibjs v2 only ships unbundled ESM (dist/RosLib.js has bare
+     `import ... from 'eventemitter3'`). Use jsdelivr's +esm endpoint,
+     which inlines dependencies into a single browser-resolvable module.
+     Then expose it as the ROSLIB global the app scripts expect, and
+     load the app scripts in order. -->
+<script type="module">
+  const mod = await import('https://cdn.jsdelivr.net/npm/roslib@2.1.0/+esm');
+  window.ROSLIB = mod.default || mod;
+  for (const src of ['/js/ros.js', '/js/view2d.js', '/js/dashboard.js']) {
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+</script>
 </body>
 </html>
