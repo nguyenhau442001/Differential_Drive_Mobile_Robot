@@ -136,7 +136,7 @@ RVIZ_ROBOT_BLOCK = """    - Class: rviz_common/Group
             Inertia: false
             Mass: false
           Name: RobotModel
-          TF Prefix: ""
+          TF Prefix: {name}
           Update Interval: 0
           Value: true
           Visual Enabled: true
@@ -291,6 +291,10 @@ def _robot_actions(robot, xacro_file):
         value_type=str,
     )
 
+    # Each robot owns /<ns>/tf (push_ros_namespace routes RSP's TF there since
+    # we don't pin /tf to absolute). use_tf_static=False streams fixed-joint
+    # transforms on /tf at publish_frequency instead of latching them on
+    # /tf_static, so the relay below only has to handle one topic.
     rsp = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -300,6 +304,8 @@ def _robot_actions(robot, xacro_file):
             'robot_description': robot_description,
             'frame_prefix': f'{name}/',
             'use_sim_time': True,
+            'use_tf_static': False,
+            'publish_frequency': 30.0,
         }],
         output='screen',
     )
@@ -348,8 +354,25 @@ def _robot_actions(robot, xacro_file):
         output='screen',
     )
 
-    # Static world -> <name>/odom transform from the spawn pose. Without this each
-    # robot's TF tree is disconnected and RViz can't show them in a common frame.
+    # TF: DiffDrive plugin publishes odom -> <name>/chassis on Gazebo's
+    # /model/<name>/tf — bridge it onto this robot's /<ns>/tf.
+    tf_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        name=f'tf_bridge_{name}',
+        arguments=[
+            f'/model/{name}/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
+        ],
+        remappings=[
+            (f'/model/{name}/tf', f'/{name}/tf'),
+        ],
+        output='screen',
+    )
+
+    # Static world -> <name>/odom transform from the spawn pose. Stays global
+    # (no namespace) so it lands on the shared /tf_static — each robot owns a
+    # unique (world, <name>/odom) frame pair so the latched messages don't
+    # collide between publishers.
     world_to_odom = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
@@ -363,7 +386,7 @@ def _robot_actions(robot, xacro_file):
         output='screen',
     )
 
-    return [rsp, spawn, sensor_bridge, joint_state_bridge, world_to_odom]
+    return [rsp, spawn, sensor_bridge, joint_state_bridge, tf_bridge, world_to_odom]
 
 
 def generate_launch_description():
