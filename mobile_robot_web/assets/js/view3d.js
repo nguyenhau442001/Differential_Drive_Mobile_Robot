@@ -78,6 +78,29 @@
     );
   }
 
+  // URDF allows <mesh>, <sphere>, <box>, <cylinder> inside <geometry>.
+  // Normalise to a small descriptor so buildLinkObject can dispatch.
+  function parseGeometry(geomEl) {
+    if (!geomEl) return null;
+    const m = geomEl.getElementsByTagName('mesh')[0];
+    if (m) return {
+      type: 'mesh',
+      url: m.getAttribute('filename'),
+      scale: parseTriplet(m.getAttribute('scale'), [1, 1, 1]),
+    };
+    const s = geomEl.getElementsByTagName('sphere')[0];
+    if (s) return { type: 'sphere', radius: parseFloat(s.getAttribute('radius')) || 0.01 };
+    const b = geomEl.getElementsByTagName('box')[0];
+    if (b) return { type: 'box', size: parseTriplet(b.getAttribute('size'), [0.01, 0.01, 0.01]) };
+    const c = geomEl.getElementsByTagName('cylinder')[0];
+    if (c) return {
+      type: 'cylinder',
+      radius: parseFloat(c.getAttribute('radius')) || 0.01,
+      length: parseFloat(c.getAttribute('length')) || 0.01,
+    };
+    return null;
+  }
+
   function parseURDF(urdfText) {
     const xml = new DOMParser().parseFromString(urdfText, 'text/xml');
     const robot = xml.querySelector('robot');
@@ -103,7 +126,7 @@
       const visuals = [];
       for (const v of lk.getElementsByTagName('visual')) {
         const origin = v.getElementsByTagName('origin')[0];
-        const mesh   = v.getElementsByTagName('mesh')[0];
+        const geomEl = v.getElementsByTagName('geometry')[0];
         const mat    = v.getElementsByTagName('material')[0];
         const color  = mat?.getElementsByTagName('color')[0];
         // Resolution order matches URDF semantics: inline <color> wins,
@@ -114,7 +137,7 @@
         visuals.push({
           xyz: parseTriplet(origin?.getAttribute('xyz')),
           rpy: parseTriplet(origin?.getAttribute('rpy')),
-          mesh: mesh?.getAttribute('filename') || null,
+          geom: parseGeometry(geomEl),
           rgba,
         });
       }
@@ -146,7 +169,7 @@
     const g = new THREE.Group();
     g.name = linkDef.name;
     for (const v of linkDef.visuals) {
-      if (!v.mesh) continue;
+      if (!v.geom) continue;
       const visGroup = new THREE.Group();
       applyRPYXYZ(visGroup, v.xyz, v.rpy);
       g.add(visGroup);
@@ -160,14 +183,29 @@
         transparent: v.rgba && v.rgba[3] < 1,
         shininess: 30,
       });
-      const placeholder = new THREE.Mesh(new THREE.BufferGeometry(), mat);
-      visGroup.add(placeholder);
-      loader.load(
-        v.mesh,
-        (geom) => { placeholder.geometry = geom; geom.computeVertexNormals(); },
-        undefined,
-        (err) => console.warn('[view3d] STL load failed', v.mesh, err),
-      );
+
+      if (v.geom.type === 'mesh') {
+        const placeholder = new THREE.Mesh(new THREE.BufferGeometry(), mat);
+        if (v.geom.scale) placeholder.scale.set(...v.geom.scale);
+        visGroup.add(placeholder);
+        loader.load(
+          v.geom.url,
+          (geom) => { placeholder.geometry = geom; geom.computeVertexNormals(); },
+          undefined,
+          (err) => console.warn('[view3d] STL load failed', v.geom.url, err),
+        );
+      } else if (v.geom.type === 'sphere') {
+        visGroup.add(new THREE.Mesh(new THREE.SphereGeometry(v.geom.radius, 24, 16), mat));
+      } else if (v.geom.type === 'box') {
+        visGroup.add(new THREE.Mesh(new THREE.BoxGeometry(...v.geom.size), mat));
+      } else if (v.geom.type === 'cylinder') {
+        // URDF cylinder axis is +Z; three.js CylinderGeometry's axis is +Y.
+        // Rotate the mesh 90° about X so URDF semantics survive.
+        const cyl = new THREE.Mesh(
+          new THREE.CylinderGeometry(v.geom.radius, v.geom.radius, v.geom.length, 24), mat);
+        cyl.rotation.x = Math.PI / 2;
+        visGroup.add(cyl);
+      }
     }
     return g;
   }
