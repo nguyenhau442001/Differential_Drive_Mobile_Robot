@@ -30,6 +30,7 @@ def generate_launch_description():
     ws_port = LaunchConfiguration('ws_port')
     http_port = LaunchConfiguration('http_port')
     open_browser = LaunchConfiguration('open_browser')
+    browser = LaunchConfiguration('browser')
     url = PythonExpression(["'http://localhost:' + '", http_port, "'"])
 
     rosbridge_launch = os.path.join(
@@ -74,7 +75,12 @@ def generate_launch_description():
         DeclareLaunchArgument('http_port', default_value='8000',
                               description='HTTP server port (serves both HTML and meshes)'),
         DeclareLaunchArgument('open_browser', default_value='true',
-                              description='Open the dashboard in the default browser on launch'),
+                              description='Open the dashboard in a browser on launch'),
+        DeclareLaunchArgument('browser', default_value='firefox',
+                              description='Browser command. Default firefox '
+                                          'because Chrome blocks WebGL on llvmpipe '
+                                          '(no-GPU VMs); pass browser:=xdg-open or '
+                                          'browser:=google-chrome to override.'),
 
         IncludeLaunchDescription(
             AnyLaunchDescriptionSource(rosbridge_launch),
@@ -89,7 +95,7 @@ def generate_launch_description():
         TimerAction(
             period=1.5,
             actions=[ExecuteProcess(
-                cmd=['xdg-open', url],
+                cmd=[browser, url],
                 output='screen',
                 condition=IfCondition(open_browser),
             )],
