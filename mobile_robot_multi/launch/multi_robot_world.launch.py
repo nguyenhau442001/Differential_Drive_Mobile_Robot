@@ -12,6 +12,7 @@ the fly with one RobotModel/LaserScan/Odometry display group per robot.
 """
 
 import colorsys
+import math
 import os
 
 import yaml
@@ -33,6 +34,24 @@ def _load_robots(yaml_path):
     with open(yaml_path, 'r') as f:
         data = yaml.safe_load(f)
     return data['robots']
+
+
+def _grid_robots(n, spacing=1.5):
+    """Place N robots on a centered square grid, all facing +X."""
+    cols = max(1, math.ceil(math.sqrt(n)))
+    rows = math.ceil(n / cols)
+    cx = (cols - 1) / 2.0
+    cy = (rows - 1) / 2.0
+    return [
+        {
+            'name': f'robot{i + 1}',
+            'x': (i % cols - cx) * spacing,
+            'y': (i // cols - cy) * spacing,
+            'z': 0.0,
+            'yaw': 0.0,
+        }
+        for i in range(n)
+    ]
 
 
 RVIZ_HEADER = """Panels:
@@ -356,10 +375,17 @@ def generate_launch_description():
     default_world = os.path.join(pkg_gazebo, 'worlds', '10x10.world')
     xacro_file = os.path.join(pkg_description, 'urdf', 'mobile_robot.urdf.xacro')
 
-    # Resolve robots_file at parse time so we can loop in Python.
-    # If the user overrides on the command line, we still read the override here.
-    robots_file = os.environ.get('ROBOTS_FILE', default_robots_file)
-    robots = _load_robots(robots_file)
+    # Resolve robot list at parse time so we can loop in Python. If N_ROBOTS is
+    # set, auto-arrange that many on a grid; otherwise read from robots.yaml
+    # (override path via ROBOTS_FILE env var).
+    n_robots_env = os.environ.get('N_ROBOTS')
+    if n_robots_env:
+        n_robots = int(n_robots_env)
+        robots = _grid_robots(n_robots)
+        print(f'[multi_robot_world] grid layout: {n_robots} robots')
+    else:
+        robots_file = os.environ.get('ROBOTS_FILE', default_robots_file)
+        robots = _load_robots(robots_file)
 
     default_rviz_config = _generate_rviz_config(
         robots, '/tmp/mobile_robot_multi.rviz'
