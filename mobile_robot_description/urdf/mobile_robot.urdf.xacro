@@ -30,7 +30,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry><mesh filename="file://$(find mobile_robot_description)/meshes/chassis.STL"/></geometry>
-      <material name=""><color rgba="0.647 0.620 0.588 1"/></material>
+      <material name="grayish-brown"></material>
     </visual>
 
     <!-- Chassis Collision -->
@@ -174,7 +174,7 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry><mesh filename="file://$(find mobile_robot_description)/meshes/lidar.STL"/></geometry>
-      <material name=""><color rgba="1 1 1 1"/></material>
+      <material name="white"></material>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
