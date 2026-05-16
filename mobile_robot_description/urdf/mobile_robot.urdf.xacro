@@ -103,7 +103,7 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry><mesh filename="file://$(find mobile_robot_description)/meshes/left_wheel_link.STL"/></geometry>
-      <material name=""><color rgba="0 0 0 1"/></material>
+      <material name="black"></material>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>
@@ -132,7 +132,7 @@
     <visual>
       <origin xyz="0 0 0"/>
       <geometry><mesh filename="file://$(find mobile_robot_description)/meshes/right_wheel_link.STL"/></geometry>
-      <material name=""><color rgba="0.79 0.82 0.93 1"/></material>
+      <material name="black"></material>
     </visual>
     <collision>
       <origin xyz="0 0 0"/>

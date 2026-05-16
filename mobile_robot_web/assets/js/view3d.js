@@ -83,6 +83,18 @@
     const robot = xml.querySelector('robot');
     if (!robot) throw new Error('No <robot> element in URDF');
 
+    // Build a registry of top-level material defs: <robot><material
+    // name="X"><color rgba="..."/></material></robot>. Visuals can then
+    // reference them by name (e.g. <material name="black"/>) without
+    // inlining the color.
+    const matRegistry = {};
+    for (const m of robot.children) {
+      if (m.tagName !== 'material') continue;
+      const name = m.getAttribute('name');
+      const color = m.getElementsByTagName('color')[0];
+      if (name && color) matRegistry[name] = parseRGBA(color.getAttribute('rgba'));
+    }
+
     // Index links and joints.
     const links = {};
     const joints = [];
@@ -94,11 +106,16 @@
         const mesh   = v.getElementsByTagName('mesh')[0];
         const mat    = v.getElementsByTagName('material')[0];
         const color  = mat?.getElementsByTagName('color')[0];
+        // Resolution order matches URDF semantics: inline <color> wins,
+        // then a named reference into the top-level material registry.
+        let rgba = null;
+        if (color)      rgba = parseRGBA(color.getAttribute('rgba'));
+        else if (mat)   rgba = matRegistry[mat.getAttribute('name')] || null;
         visuals.push({
           xyz: parseTriplet(origin?.getAttribute('xyz')),
           rpy: parseTriplet(origin?.getAttribute('rpy')),
           mesh: mesh?.getAttribute('filename') || null,
-          rgba: color ? parseRGBA(color.getAttribute('rgba')) : null,
+          rgba,
         });
       }
       links[name] = { name, visuals };
