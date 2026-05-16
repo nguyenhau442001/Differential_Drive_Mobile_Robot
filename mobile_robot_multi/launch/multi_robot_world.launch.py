@@ -19,11 +19,11 @@ from launch.actions import (
     IncludeLaunchDescription,
     SetEnvironmentVariable,
 )
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
-from launch.substitutions import Command
 
 
 def _load_robots(yaml_path):
@@ -102,7 +102,22 @@ def _robot_actions(robot, xacro_file):
         output='screen',
     )
 
-    return [rsp, spawn, sensor_bridge, joint_state_bridge]
+    # Static world -> <name>/odom transform from the spawn pose. Without this each
+    # robot's TF tree is disconnected and RViz can't show them in a common frame.
+    world_to_odom = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name=f'world_to_{name}_odom',
+        arguments=[
+            '--x', x, '--y', y, '--z', z,
+            '--yaw', yaw, '--pitch', '0', '--roll', '0',
+            '--frame-id', 'world',
+            '--child-frame-id', f'{name}/odom',
+        ],
+        output='screen',
+    )
+
+    return [rsp, spawn, sensor_bridge, joint_state_bridge, world_to_odom]
 
 
 def generate_launch_description():
@@ -112,6 +127,7 @@ def generate_launch_description():
 
     default_robots_file = os.path.join(pkg_multi, 'config', 'robots.yaml')
     default_world = os.path.join(pkg_gazebo, 'worlds', '10x10.world')
+    default_rviz_config = os.path.join(pkg_multi, 'rviz', 'multi_robot.rviz')
     xacro_file = os.path.join(pkg_description, 'urdf', 'mobile_robot.urdf.xacro')
 
     robots_file_arg = DeclareLaunchArgument(
@@ -123,6 +139,16 @@ def generate_launch_description():
         'world',
         default_value=default_world,
         description='Path to the SDF/.world file Gazebo loads',
+    )
+    rviz_arg = DeclareLaunchArgument(
+        'rviz',
+        default_value='true',
+        description='Whether to launch RViz',
+    )
+    rviz_config_arg = DeclareLaunchArgument(
+        'rviz_config',
+        default_value=default_rviz_config,
+        description='RViz config file to load',
     )
 
     # Resolve robots_file at parse time so we can loop in Python.
@@ -141,12 +167,25 @@ def generate_launch_description():
         launch_arguments={'gz_args': ['-r ', LaunchConfiguration('world')]}.items(),
     )
 
+    rviz = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', LaunchConfiguration('rviz_config')],
+        parameters=[{'use_sim_time': True}],
+        condition=IfCondition(LaunchConfiguration('rviz')),
+        output='screen',
+    )
+
     actions = [
         # Force EGL to use X11 platform so sensor render thread can fall back to llvmpipe.
         SetEnvironmentVariable('EGL_PLATFORM', 'x11'),
         robots_file_arg,
         world_arg,
+        rviz_arg,
+        rviz_config_arg,
         gz_sim,
+        rviz,
     ]
     for r in robots:
         actions.extend(_robot_actions(r, xacro_file))
