@@ -232,3 +232,40 @@ input[type="range"] { width: 100%; }
   font-family: ui-monospace, monospace;
   color: #9cf;
 }
+
+/* ---------- 3D view (.view-3d fragment) ---------- */
+.view-3d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+#three-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #16181d;
+}
+
+#three-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#three-canvas canvas {
+  display: block;
+}
+
+#hud3d {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  font-family: ui-monospace, monospace;
+  color: #9cf;
+}

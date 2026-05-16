@@ -13,7 +13,7 @@
   <span id="navStatus" class="badge">Nav: idle</span>
   <nav class="tabs">
     <button data-view="2d" class="active">2D</button>
-    <button data-view="3d" disabled title="Coming in the next commit">3D</button>
+    <button data-view="3d">3D</button>
   </nav>
   <span class="spacer"></span>
 </header>
@@ -96,6 +96,17 @@
 <script src="https://cdn.jsdelivr.net/npm/easeljs@1.0.2/lib/easeljs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ros2d@0.9.0/build/ros2d.min.js"></script>
 
+<!-- three.js (3D view). Importmap resolves the bare `three` / `three/addons/`
+     specifiers used by view3d.js. -->
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+</script>
+
 <!-- roslibjs v2 only ships unbundled ESM (dist/RosLib.js has bare
      `import ... from 'eventemitter3'`). Use jsdelivr's +esm endpoint,
      which inlines dependencies into a single browser-resolvable module.
@@ -104,7 +115,7 @@
 <script type="module">
   const mod = await import('https://cdn.jsdelivr.net/npm/roslib@2.1.0/+esm');
   window.ROSLIB = mod.default || mod;
-  for (const src of ['/js/ros.js', '/js/view2d.js', '/js/dashboard.js']) {
+  for (const src of ['/js/ros.js', '/js/view2d.js', '/js/view3d.js', '/js/dashboard.js']) {
     await new Promise((resolve, reject) => {
       const s = document.createElement('script');
       s.src = src;

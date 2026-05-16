@@ -1,0 +1,47 @@
+<!-- 3d.html — Fragment loaded by dashboard.js into dashboard.html.
+     Mirrors 2d.html's data-slot split:
+       data-slot="view-main"    → injected into #view-container
+       data-slot="view-sidebar" → injected into #view-sidebar
+     dashboard.js calls View3D.init() (js/view3d.js) once the DOM is in
+     place; that handler creates the three.js scene inside #three-canvas. -->
+
+<div data-slot="view-main" class="view-3d">
+  <div id="three-wrap">
+    <div id="three-canvas"></div>
+    <div id="legend">
+      <div><span class="sw" style="background:#4ad"></span> Robot (URDF)</div>
+      <div><span class="sw" style="background:#f44"></span> Laser scan</div>
+      <div><span class="sw" style="background:#fc4"></span> Goal</div>
+      <div><span class="sw" style="background:#7af"></span> Map</div>
+    </div>
+    <div id="hud3d">
+      <span id="hud3dPose">x: -- y: -- yaw: --</span>
+      &nbsp;|&nbsp;
+      <span id="hud3dURDF">URDF: waiting…</span>
+    </div>
+  </div>
+</div>
+
+<div data-slot="view-sidebar">
+  <div class="card">
+    <h2>Layers</h2>
+    <div class="toggle-row">
+      <button id="layer3d-scan" class="active">Scan</button>
+      <button id="layer3d-map"  class="active">Map</button>
+      <button id="layer3d-grid" class="active">Grid</button>
+      <button id="layer3d-axes" class="active">Axes</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Camera</h2>
+    <div class="row">
+      <button id="cam-reset" style="flex:1;">Reset view</button>
+    </div>
+    <div class="row" style="margin-top:6px;">
+      <label style="flex:1;">
+        <input type="checkbox" id="cam-follow"> Follow robot
+      </label>
+    </div>
+  </div>
+</div>
