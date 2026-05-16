@@ -262,6 +262,32 @@
     if (hud) hud.textContent = `URDF: ${rootName} + ${joints.length} joints`;
   }
 
+  // ---------- swarm discovery ----------
+  // List robot namespaces by looking for /<ns>/robot_description topics on
+  // the live rosgraph. A topic at the root /robot_description (no ns) is
+  // reported as '' so callers can treat the single-robot setup uniformly.
+  function discoverRobots() {
+    return new Promise((resolve) => {
+      if (!RosApp.ros) return resolve([]);
+      RosApp.ros.getTopics((result) => {
+        const namespaces = new Set();
+        for (const t of result.topics || []) {
+          const m = t.match(/^\/([^/]+)\/robot_description$/);
+          if (m) namespaces.add(m[1]);
+          else if (t === '/robot_description') namespaces.add('');
+        }
+        resolve([...namespaces].sort());
+      }, () => resolve([]));
+    });
+  }
+
+  // Even hue spread across the swarm — saturated enough to read against the
+  // dark background, light enough to not fight foreground geometry.
+  function colorForIndex(i, n) {
+    const hue = ((i / Math.max(n, 1)) * 360) % 360;
+    return new THREE.Color(`hsl(${hue.toFixed(0)}, 70%, 60%)`);
+  }
+
   // ---------- ROS topic wiring ----------
   function setupTopics() {
     if (!RosApp.ros) {
@@ -273,6 +299,24 @@
       teardown.push(() => RosApp.bus.removeEventListener('rosReady', onReady));
       return;
     }
+
+    // Probe the swarm — log what we find, no scene changes yet. Per-robot
+    // rendering is the next chunk; this just verifies discovery against
+    // whatever launch is running.
+    discoverRobots().then((names) => {
+      if (names.length === 0) {
+        console.log('[view3d] swarm discovery: no /robot_description topics yet');
+        return;
+      }
+      console.groupCollapsed(`[view3d] swarm discovery: ${names.length} robot(s)`);
+      names.forEach((n, i) => {
+        const c = colorForIndex(i, names.length);
+        const label = n || '(root)';
+        console.log(`%c●%c ${label}  →  topic ns: ${n ? '/' + n : '(root)'}`,
+          `color: #${c.getHexString()}; font-size: 14px;`, 'color: inherit;');
+      });
+      console.groupEnd();
+    });
 
     // /robot_description — std_msgs/String, latched (transient_local). One-shot.
     const urdfTopic = new ROSLIB.Topic({
