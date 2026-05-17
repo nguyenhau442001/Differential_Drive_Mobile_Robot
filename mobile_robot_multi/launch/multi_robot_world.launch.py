@@ -21,9 +21,11 @@ from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
+    RegisterEventHandler,
     SetEnvironmentVariable,
 )
 from launch.conditions import IfCondition
+from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import Command, LaunchConfiguration
 from launch_ros.actions import Node
@@ -278,7 +280,27 @@ def _generate_rviz_config(robots, output_path):
     return output_path
 
 
-def _robot_actions(robot, xacro_file):
+def _spawn_action(robot):
+    """The gz `create` Node — kept separate so spawns can be chained sequentially."""
+    name = robot['name']
+    return Node(
+        package='ros_gz_sim',
+        executable='create',
+        name=f'spawn_{name}',
+        arguments=[
+            '--name', name,
+            '--topic', f'/{name}/robot_description',
+            '--x', str(robot.get('x', 0.0)),
+            '--y', str(robot.get('y', 0.0)),
+            '--z', str(robot.get('z', 0.0)),
+            '--Y', str(robot.get('yaw', 0.0)),
+        ],
+        output='screen',
+    )
+
+
+def _robot_aux_actions(robot, xacro_file):
+    """All per-robot actions except the gz spawn — RSP, bridges, static TF."""
     name = robot['name']
     x = str(robot.get('x', 0.0))
     y = str(robot.get('y', 0.0))
@@ -308,21 +330,6 @@ def _robot_actions(robot, xacro_file):
             'use_tf_static': False,
             'publish_frequency': 30.0,
         }],
-        output='screen',
-    )
-
-    spawn = Node(
-        package='ros_gz_sim',
-        executable='create',
-        name=f'spawn_{name}',
-        arguments=[
-            '--name', name,
-            '--topic', f'/{name}/robot_description',
-            '--x', x,
-            '--y', y,
-            '--z', z,
-            '--Y', yaw,
-        ],
         output='screen',
     )
 
@@ -388,7 +395,7 @@ def _robot_actions(robot, xacro_file):
         output='screen',
     )
 
-    return [rsp, spawn, sensor_bridge, joint_state_bridge, tf_bridge, world_to_odom]
+    return [rsp, sensor_bridge, joint_state_bridge, tf_bridge, world_to_odom]
 
 
 def generate_launch_description():
@@ -469,7 +476,22 @@ def generate_launch_description():
         gz_sim,
         rviz,
     ]
+    # Aux nodes (RSP, bridges, static TF) fire concurrently at t=0 — they're
+    # idempotent against late Gazebo topics and the latched URDFs need to be
+    # on the network before any spawn subscribes.
     for r in robots:
-        actions.extend(_robot_actions(r, xacro_file))
+        actions.extend(_robot_aux_actions(r, xacro_file))
+
+    # Chain `ros_gz_sim create` calls: each spawn fires only after the previous
+    # one's process exits. Gazebo's /world/default/create service is
+    # single-threaded and DiffDrive-plugin init per model takes real time, so
+    # serialising spawns eliminates the race that drops the last entity at high
+    # N. Total launch time becomes the sum of actual spawn durations — no slack.
+    spawns = [_spawn_action(r) for r in robots]
+    for prev, curr in zip(spawns, spawns[1:]):
+        actions.append(RegisterEventHandler(
+            OnProcessExit(target_action=prev, on_exit=[curr]),
+        ))
+    actions.append(spawns[0])
 
     return LaunchDescription(actions)
