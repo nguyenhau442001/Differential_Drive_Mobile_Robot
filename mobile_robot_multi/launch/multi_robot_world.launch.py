@@ -291,10 +291,11 @@ def _robot_actions(robot, xacro_file):
         value_type=str,
     )
 
-    # Each robot owns /<ns>/tf (push_ros_namespace routes RSP's TF there since
-    # we don't pin /tf to absolute). use_tf_static=False streams fixed-joint
-    # transforms on /tf at publish_frequency instead of latching them on
-    # /tf_static, so the relay below only has to handle one topic.
+    # robot_state_publisher's TransformBroadcaster publishes to the absolute
+    # /tf, so the namespace does NOT push it to /<ns>/tf — all RSPs share /tf
+    # and rely on prefixed frame names to stay disjoint. use_tf_static=False
+    # streams fixed-joint transforms on /tf at publish_frequency instead of
+    # latching them on /tf_static.
     rsp = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -355,7 +356,8 @@ def _robot_actions(robot, xacro_file):
     )
 
     # TF: DiffDrive plugin publishes odom -> <name>/chassis on Gazebo's
-    # /model/<name>/tf — bridge it onto this robot's /<ns>/tf.
+    # /model/<name>/tf — bridge it onto the global /tf so it joins the rest
+    # of the tree (RSP publishes chassis -> wheels there too).
     tf_bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -364,7 +366,7 @@ def _robot_actions(robot, xacro_file):
             f'/model/{name}/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V',
         ],
         remappings=[
-            (f'/model/{name}/tf', f'/{name}/tf'),
+            (f'/model/{name}/tf', '/tf'),
         ],
         output='screen',
     )
